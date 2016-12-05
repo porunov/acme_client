@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'application'
+
+mainClassName = "com.jblur.acme_client.Application"
+
+jar {
+    baseName = 'acme_client'
+    manifest {
+        attributes "Main-Class": "$mainClassName"
+    }
+
+    doFirst {
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.7'
+    compile group: 'org.shredzone.acme4j', name: 'acme4j-client', version: '0.8'
+    compile group: 'org.shredzone.acme4j', name: 'acme4j-utils', version: '0.8'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.55'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+    compile group: 'com.beust', name: 'jcommander', version: '1.48'
+}
