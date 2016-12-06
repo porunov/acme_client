@@ -1,5 +1,5 @@
 # Java ACME client application for fully manual certificate installation/management.
-### Suitable if you have your own automation tools (ansible, puppet, chef, saltstack) or you want to automate your certificate management (generate/renew/revoke...) by your own (with your own scripts/programs/crond jobs).
+### Suitable if you have your own automation tools (ansible, puppet, chef, saltstack...) or you want to automate your certificate management (generate/renew/revoke...) by your own (with your own scripts/programs/crond jobs...).
 
 This application is based on Java ACME library implementation:<br>
 https://github.com/shred/acme4j<br>
