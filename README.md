@@ -158,8 +158,8 @@ java -jar acme_client.jar --command <command> [options]
    Default: /var/acme_work_dir/
 ```
 
-Every time you run acme_client you must set the parameter command parameter `--command`<br>
-Optional parameters for all commands are: `--log-dir`, `--log-level`, `--server-url`, `--with-agreement-update`, `--agreement-url`<br>
+Every time you run acme_client you must set the parameter command parameter `--command`.<br>
+Optional parameters for all commands are: `--log-dir`, `--log-level`, `--server-url`, `--with-agreement-update`, `--agreement-url`.<br>
 For most of your commands you should specify working directory for your account (`--work-dir`) but you can left it by default.
 
 ##Commands:
@@ -219,7 +219,8 @@ For most of your commands you should specify working directory for your account 
      Optional parameters: `--cert-dir`, `--max-expiration-time`, `--force`
 
 ##Example scenarios:
-###Get a certificate for domains: ##### `example.com`, `www.example.com`, `admin.example.com`, `www.admin.example.com`
+###Get a certificate for domains: 
+`example.com`, `www.example.com`, `admin.example.com`, `www.admin.example.com`
 
 1. generate a private account key
 
@@ -283,7 +284,7 @@ For most of your commands you should specify working directory for your account 
   --well-known-dir /path/to/wellknown --one-dir-for-well-known
   ```
 
-7. Copy your files from /path/to/wellknown directory to your server so that they can be retrivable via next link:<br>
+7. Copy your files from /path/to/wellknown directory to your server so that they can be retrivable via the next link:
 `http://${domain}/.well-known/acme-challenge/${token}` where `${token}` is a name of a file and `${domain}` is your domain name.<br>
 For example you can use next teqniue:
 
@@ -299,7 +300,7 @@ For example you can use next teqniue:
     cd /tmp/public_html
     ```
     
-  3. Copy your wellknown files into your server location under `/.well-known/acme-challenge/`:
+  3. Copy your wellknown files into your server location under `.well-known/acme-challenge/`:
   
     ```
     cp /path/to/wellknown/* /tmp/public_html/.well-known/acme-challenge/
