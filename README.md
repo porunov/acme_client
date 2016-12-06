@@ -25,7 +25,7 @@ All functions are separated, so you can execute them as needed.
 ## How to install acme_client?
 1. You have to install Java 8.
 2. Check if your java has certificates for your provider. If your java release hasn't certificates you should add them to your java. ( Only newest Java 8 versions has Letsencrypt certificates ).
-3. Download an executable file `acme_client.jar`: ...
+3. Download an executable file `acme_client.jar`: https://github.com/porunov/acme_client/releases/download/v1.0/acme_client.jar
 
 ## How to compile it from sources?
 1. Clone the project (or download it) 
