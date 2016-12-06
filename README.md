@@ -68,3 +68,6 @@ See all available commands in wiki: https://github.com/porunov/acme_client/wiki/
 
 ## Example scenarios:
 1. [Get a certificate for differant domains](https://github.com/porunov/acme_client/wiki/Example-scenarios)
+
+## Troubleshooting
+See [Troubleshooting](https://github.com/porunov/acme_client/wiki/Troubleshooting) if you have any problems with installation/usage.
