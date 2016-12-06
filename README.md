@@ -165,62 +165,61 @@ For most of your commands you should specify working directory for your account 
 ##Commands:
 
 1. `register` - create a new account.<br>
-        Requires parameters: --account-key
-        Optional parameters: --email
+    Requires parameters: `--account-key` <br>
+    Optional parameters: `--email`
 
-2. `get-agreement-url` - return a JSON object with 'agreement_ur' key where value is the most up to date agreement. You must accept agreement if you want to use a service.
-        Requires parameters: --account-key
+2. `get-agreement-url` - return a JSON object with `agreement_ur` key where value is the most up to date agreement. You must accept agreement if you want to use a service.<br>
+    Requires parameters: `--account-key`
 
-3. `update-agreement` - accept agreement. If you do not specify '--agreement-url' you will automatically agree with the newest agreement.
-        Requires parameters: --account-key
-        Optional parameters: --agreement-url
+3. `update-agreement` - accept agreement. If you do not specify `--agreement-url` you will automatically agree with the newest agreement.<br>
+    Requires parameters: `--account-key`<br>
+    Optional parameters: `--agreement-url`
 
-4. `add-email` - add email to your account (some providers can recover your email if you lose your account private key).
-        Requires parameters: --account-key, --email
+4. `add-email` - add email to your account (some providers can recover your email if you lose your account private key).<br>
+    Requires parameters: `--account-key`, `--email`
 
-5. `deactivate-account` - deactivate your account
-        Requires parameters: --account-key
+5. `deactivate-account` - deactivate your account<br>
+    Requires parameters: `--account-key`
 
-6. `authorize-domains`  authorize specified domains. You must specify all domains which you use in CSR (i.e. main domain and alternative domain names).        
-        Requires parameters: --account-key, --domain
-        Optional parameters: --challenge-type
+6. `authorize-domains`  authorize specified domains. You must specify all domains which you use in CSR (i.e. main domain and alternative domain names).<br>
+    Requires parameters: `--account-key`, `--domain`<br>
+    Optional parameters: `--challenge-type`
 
-7. `deactivate-domain-authorization` - deactive domain authorization for specific domain address (or for all if not specified) if you want to remove/sell your domain addresses.
-        Requires parameters: --account-key
-        Optional parameters: --domain
-        Must have a file in working dir: authorization_uri_list
+7. `deactivate-domain-authorization` - deactive domain authorization for specific domain address (or for all if not specified) if you want to remove/sell your domain addresses.<br>
+    Requires parameters: `--account-key`<br>
+    Optional parameters: `--domain`<br>
+    Must have a file in working dir: `authorization_uri_list`
 
-8. `download-challenges` - Download challenges from your authorizations.
-        Requires parameters: --account-key
-        Optional parameters: --domain
-        Must have file in working dir: authorization_uri_list
+8. `download-challenges` - Download challenges from your authorizations.<br>
+    Requires parameters: `--account-key`<br>
+    Optional parameters: `--domain`<br>
+    Must have file in working dir: `authorization_uri_list`
 
-9. `verify-domains` - Check your challenges and verify your domains.
-        Requires parameters: --account-key
-        Optional parameters: --domain
-        Must have a file in working dir: authorization_uri_list
+9. `verify-domains` - Check your challenges and verify your domains.<br>
+    Requires parameters: `--account-key`<br>
+    Optional parameters: `--domain`<br>
+    Must have a file in working dir: `authorization_uri_list`
 
-10. `generate-certificate` - Generate new certificate.
-        Requires parameters: --account-key, --csr
-        Optional parameters: --cert-dir
+10. `generate-certificate` - Generate new certificate.<br>
+     Requires parameters: `--account-key`, `--csr`<br>
+     Optional parameters: `--cert-dir`
 
-11. `download-certificate` - Download your certificates which you have created earlier. If you specify '--newest-only' then you will download only newest certificate. Without that parameter you will download all certificates sorted by expiration date (i.e. cert_0.pem is the newest and cert_15.pem is the oldest).
-        Requires parameters: --account-key
-        Optional parameters: --newest-only
-        Must have a file in working dir: certificate_uri_list
+11. `download-certificate` - Download your certificates which you have created earlier. If you specify `--newest-only` then you will download only newest certificate. Without that parameter you will download all certificates sorted by expiration date (i.e. `cert_0.pem` is the newest and `cert_15.pem` is the oldest).<br>
+     Requires parameters: `--account-key`<br>
+     Optional parameters: `--newest-only`<br>
+     Must have a file in working dir: `certificate_uri_list`
 
-12. `revoke-certificate` - revoke certificates. You can revoke either all your certificates or by time criteria. All certificates will be removed which are started after '--from-time' and which will be expired till '--to-time'. These parameters are written as GMT milliseconds.
-        Requires parameters: --account-key
-        Optional parameters: --from-time, --to-time
-        Must have a file in working dir: certificate_uri_list
+12. `revoke-certificate` - revoke certificates. You can revoke either all your certificates or by time criteria. All certificates will be removed which are started after `--from-time` and which will be expired till `--to-time`. These parameters are written as GMT milliseconds.<br>
+     Requires parameters: `--account-key`<br>
+     Optional parameters: `--from-time`, `--to-time`<br>
+     Must have a file in working dir: `certificate_uri_list`
 
-13. `renew-certificate` - Renew certificate either for existing CSR or for new CSR. Will create a new certificate only if all your certificates will expire after '--max-expiration-time'. '--max-expiration-time' is a time written in milliseconds (By default it is 2592000000 which is equal to 30 days).
-        Requires parameters: --account-key, --csr
-        Optional parameters: --cert-dir, --max-expiration-time, --force.
-
+13. `renew-certificate` - Renew certificate either for existing CSR or for new CSR. Will create a new certificate only if all your certificates will expire after `--max-expiration-time`. `--max-expiration-time` is a time written in milliseconds (By default it is 2592000000 which is equal to 30 days).<br>
+     Requires parameters: `--account-key`, `--csr`<br>
+     Optional parameters: `--cert-dir`, `--max-expiration-time`, `--force`
 
 ##Example scenarios:
-###Get a certificate for domains: example.com, www.example.com, admin.example.com, www.admin.example.com
+###Get a certificate for domains: `example.com`, `www.example.com`, `admin.example.com`, `www.admin.example.com`
 
 1. generate a private account key
 
