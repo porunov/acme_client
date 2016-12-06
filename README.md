@@ -159,7 +159,8 @@ java -jar acme_client.jar --command <command> [options]
 
 Every time you run acme_client you must set the parameter command parameter `--command`.<br>
 Optional parameters for all commands are: `--log-dir`, `--log-level`, `--server-url`, `--with-agreement-update`, `--agreement-url`.<br>
-For most of your commands you should specify working directory for your account (`--work-dir`) but you can left it by default.
+For most of your commands you should specify working directory for your account (`--work-dir`) but you can left it by default.<br>
+Every command returns a JSON object which always contains either "status":"ok" or "status":"error" and sometimes an additional information. You should check your log file if you get "status":"error".
 
 ##Commands:
 
@@ -180,21 +181,21 @@ For most of your commands you should specify working directory for your account 
 5. `deactivate-account` - deactivate your account<br>
     Requires parameters: `--account-key`
 
-6. `authorize-domains`  authorize specified domains. You must specify all domains which you use in CSR (i.e. main domain and alternative domain names).<br>
+6. `authorize-domains`  authorize specified domains. You must specify all domains which you use in CSR (i.e. main domain and alternative domain names).<br> If you get "status":"error" this command may include domains which were not authorized ("failed_domains":["example.com", "blog.example.com"]). You can see  the reason in your log file.<br>
     Requires parameters: `--account-key`, `--domain`<br>
     Optional parameters: `--challenge-type`
 
-7. `deactivate-domain-authorization` - deactive domain authorization for specific domain address (or for all if not specified) if you want to remove/sell your domain addresses.<br>
+7. `deactivate-domain-authorization` - deactive domain authorization for specific domain address (or for all if not specified) if you want to remove/sell your domain addresses.<br> If you get "status":"error" this command may include domains which were not deactivated ("failed_domains":["example.com", "blog.example.com"]). You can see  the reason in your log file.<br>
     Requires parameters: `--account-key`<br>
     Optional parameters: `--domain`<br>
     Must have a file in working dir: `authorization_uri_list`
 
-8. `download-challenges` - Download challenges from your authorizations.<br>
+8. `download-challenges` - Download challenges from your authorizations.<br> If you get "status":"error" this command may include authorizations' locations from which challenges wasn't been downloaded ("failed_authorizations_to_download":["https://...", "https://..."]). You can see  the reason in your log file.<br>
     Requires parameters: `--account-key`<br>
     Optional parameters: `--domain`<br>
     Must have file in working dir: `authorization_uri_list`
 
-9. `verify-domains` - Check your challenges and verify your domains.<br>
+9. `verify-domains` - Check your challenges and verify your domains.<br> If you get "status":"error" this command may include domains which were not verified ("failed_domains":["example.com", "blog.example.com"]). You can see  the reason in your log file.<br>
     Requires parameters: `--account-key`<br>
     Optional parameters: `--domain`<br>
     Must have a file in working dir: `authorization_uri_list`
@@ -208,7 +209,7 @@ For most of your commands you should specify working directory for your account 
      Optional parameters: `--newest-only`<br>
      Must have a file in working dir: `certificate_uri_list`
 
-12. `revoke-certificate` - revoke certificates. You can revoke either all your certificates or by time criteria. All certificates will be removed which are started after `--from-time` and which will be expired till `--to-time`. These parameters are written as GMT milliseconds.<br>
+12. `revoke-certificate` - revoke certificates. You can revoke either all your certificates or by time criteria. All certificates will be removed which are started after `--from-time` and which will be expired till `--to-time`. These parameters are written as GMT milliseconds.<br> If you get "status":"error" this command may include certificates' locations which were not revoked ("failed_certificates":["https://...", "https://..."]). You can see  the reason in your log file.<br>
      Requires parameters: `--account-key`<br>
      Optional parameters: `--from-time`, `--to-time`<br>
      Must have a file in working dir: `certificate_uri_list`
