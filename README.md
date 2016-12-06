@@ -5,7 +5,7 @@ This application is based on Java ACME library implementation:<br>
 https://github.com/shred/acme4j<br>
 If you need more options or your own implementation you can use that library.
 
-##Supported functions:
+## Supported functions:
 1. Account creation  
 2. Retrieve url of the newest agreement.  
 3. Update agreement.  
@@ -22,12 +22,12 @@ If you need more options or your own implementation you can use that library.
 
 All functions are separated, so you can execute them as needed.
 
-##How to install acme_client?
+## How to install acme_client?
 1. You have to install Java 8.
 2. Check if your java has certificates for your provider. If your java release hasn't certificates you should add them to your java. ( Only newest Java 8 versions has Letsencrypt certificates ).
 3. Download an executable file `acme_client.jar`: ...
 
-##How to compile it from sources?
+## How to compile it from sources?
 1. Clone the project (or download it) 
   
   ```
@@ -54,13 +54,13 @@ All functions are separated, so you can execute them as needed.
 
 5. There will be an executable file `acme_client.jar`.
 
-##Usage: 
+## Usage: 
 
 ```
 java -jar acme_client.jar --command <command> [options]
 ```
 
-##Options:
+## Options:
 
 ```
 --account-key, -a
@@ -162,7 +162,7 @@ Optional parameters for all commands are: `--log-dir`, `--log-level`, `--server-
 For most of your commands you should specify working directory for your account (`--work-dir`) but you can left it by default.<br>
 Every command returns a JSON object which always contains either `"status":"ok"` or `"status":"error"` and sometimes an additional information. You should check your log file if you get `"status":"error"`.
 
-##Commands:
+## Commands:
 
 1. `register` - create a new account.<br>
     Requires parameters: `--account-key` <br>
@@ -218,8 +218,8 @@ Every command returns a JSON object which always contains either `"status":"ok"`
      Requires parameters: `--account-key`, `--csr`<br>
      Optional parameters: `--cert-dir`, `--max-expiration-time`, `--force`
 
-##Example scenarios:
-###Get a certificate for domains: 
+# Example scenarios:
+## Get a certificate for domains: 
 `example.com`, `www.example.com`, `admin.example.com`, `www.admin.example.com`
 
 1. generate a private account key
