@@ -76,7 +76,18 @@ See all available options in wiki: https://github.com/porunov/acme_client/wiki/O
 See all available commands in wiki: https://github.com/porunov/acme_client/wiki/Commands
 
 ## Example scenarios:
-1. [Get a certificate for differant domains](https://github.com/porunov/acme_client/wiki/Example-scenarios)
+1. [Get a certificate for different domains](https://github.com/porunov/acme_client/wiki/Scenario-1:-Get-a-certificate-for-different-domains)<br>
+2. [Renew certificate](https://github.com/porunov/acme_client/wiki/Scenario-2:-Renew-certificate)<br> 
+3. [Revoke certificates](https://github.com/porunov/acme_client/wiki/Scenario-3:-Revoke-certificates)<br>
+4. [Download certificates](https://github.com/porunov/acme_client/wiki/Scenario-4:-Download-certificates)<br>
+5. [Download challenges](https://github.com/porunov/acme_client/wiki/Scenario-5:--Download-challenges)<br>
+6. [Verify domains](https://github.com/porunov/acme_client/wiki/Scenario-6:-Verify-domains)<br>
+7. [Get and Update agreement](https://github.com/porunov/acme_client/wiki/Scenario-7:-Get-and-Update-agreement)<br>
+8. [Add an email to your account](https://github.com/porunov/acme_client/wiki/Scenario-8:-Add-an-email-to-your-account)<br>
+9. [Create an account](https://github.com/porunov/acme_client/wiki/Scenario-9:-Create-an-account)<br>
+10. [Deactivate domain authorization](https://github.com/porunov/acme_client/wiki/Scenario-10:-Deactivate-domain-authorization)<br>
+11. [Deactivate an account](https://github.com/porunov/acme_client/wiki/Scenario-11:-Deactivate-an-account)<br>
+12. [Generate a certificate](https://github.com/porunov/acme_client/wiki/Scenario-12:-Generate-a-certificate)<br>
 
 ## Troubleshooting
 See [Troubleshooting](https://github.com/porunov/acme_client/wiki/Troubleshooting) if you have any problems with installation/usage.
