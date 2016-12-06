@@ -61,10 +61,10 @@ java -jar acme_client.jar --command <command> [options]
 ```
 
 #### ! Warning !
-By default acme_client uses Letsencrypt's production server. I.e.:
+By default acme_client uses Letsencrypt's production server. I.e.:<br>
 `https://acme-v01.api.letsencrypt.org/directory`
 
-If you want to test the client then use a test server:
+If you want to test the client then use a test server:<br>
 `--server-url https://acme-staging.api.letsencrypt.org/directory`
 
 ## Options:
