@@ -36,12 +36,23 @@ public class Parameters {
                 "--server-url, --with-agreement-update, --agreement-url\n");
         MAIN_USAGE.append("For most of your commands you should specify working directory " +
                 "for your account (--work-dir) but you can left it by default.\n");
+        MAIN_USAGE.append("Every command returns a JSON object which always contains either \"status\":\"ok\" or " +
+                "\"status\":\"error\" and sometimes an additional information. " +
+                "You should check your log file if you get \"status\":\"error\".\n");
+        MAIN_USAGE.append("\nBy default acme_client uses Letsencrypt's production server. I.e.:\n" +
+                "'https://acme-v01.api.letsencrypt.org/directory'" +
+                "\nIf you want to test the client then use a test server:\n" +
+                "--server-url 'https://acme-staging.api.letsencrypt.org/directory'\n" +
+                "If you use Letsencrypt's production server for testing you can reach limits " +
+                "which are set by Letsencrypt (or your ACME provider).\n");
         MAIN_USAGE.append("\nCommands:\n");
         MAIN_USAGE.append("\n1) register - create a new account.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --email\n");
         MAIN_USAGE.append("\n2) get-agreement-url - return a JSON object with 'agreement_ur' key where value " +
                 "is the most up to date agreement. You must accept agreement if you want to use a service.\n" +
+                "This command include `agreement_url` into JSON response " +
+                "(I.e. {\"status\":\"ok\", \"agreement_url\":\"https://...\"}).\n" +
                 "\tRequires parameters: --account-key\n");
         MAIN_USAGE.append("\n3) update-agreement - accept agreement. If you do not specify " +
                 "'--agreement-url' you will automatically agree with the newest agreement.\n" +
@@ -53,19 +64,28 @@ public class Parameters {
         MAIN_USAGE.append("\n5) deactivate-account - deactivate your account\n" +
                 "\tRequires parameters: --account-key\n");
         MAIN_USAGE.append("\n6) authorize-domains  authorize specified domains. You must specify all " +
-                "domains which you use in CSR (i.e. main domain and alternative domain names)." +
+                "domains which you use in CSR (i.e. main domain and alternative domain names).\n" +
+                "If you get \"status\":\"error\" this command may include domains which were not authorized " +
+                "(\"failed_domains\":[\"example.com\", \"blog.example.com\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key, --domain\n" +
                 "\tOptional parameters: --challenge-type\n");
         MAIN_USAGE.append("\n7) deactivate-domain-authorization - deactive domain authorization for specific " +
                 "domain address (or for all if not specified) if you want to remove/sell your domain addresses.\n" +
+                "If you get \"status\":\"error\" this command may include domains which were not deactivated " +
+                "(\"failed_domains\":[\"example.com\", \"blog.example.com\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --domain\n" +
                 "\tMust have a file in working dir: authorization_uri_list\n");
         MAIN_USAGE.append("\n8) download-challenges - Download challenges from your authorizations.\n" +
+                "If you get \"status\":\"error\" this command may include authorizations' locations from " +
+                "which challenges wasn't been downloaded (\"failed_authorizations_to_download" +
+                "\":[\"https://...\", \"https://...\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
-                "\tOptional parameters: --domain\n" +
+                "\tOptional parameters: --domain, --challenge-type\n" +
                 "\tMust have file in working dir: authorization_uri_list\n");
         MAIN_USAGE.append("\n9) verify-domains - Check your challenges and verify your domains.\n" +
+                "If you get \"status\":\"error\" this command may include domains which were not verified " +
+                "(\"failed_domains\":[\"example.com\", \"blog.example.com\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --domain\n" +
                 "\tMust have a file in working dir: authorization_uri_list\n");
@@ -83,6 +103,9 @@ public class Parameters {
                 "certificates or by time criteria. All certificates will be removed which are started after " +
                 "'--from-time' and which will be expired till '--to-time'. " +
                 "These parameters are written as GMT milliseconds.\n" +
+                "If you get \"status\":\"error\" this command may include certificates' locations which were not " +
+                "revoked (\"failed_certificates\":[\"https://...\", \"https://...\"]). " +
+                "You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --from-time, --to-time\n" +
                 "\tMust have a file in working dir: certificate_uri_list\n");
