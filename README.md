@@ -67,6 +67,8 @@ By default acme_client uses Letsencrypt's production server. I.e.:<br>
 If you want to test the client then use a test server:<br>
 `--server-url https://acme-staging.api.letsencrypt.org/directory`
 
+If you will use Letsencrypt's production server for testing you can reach limits which is set by Letsencrypt (or your ACME provider).
+
 ## Options:
 See all available options in wiki: https://github.com/porunov/acme_client/wiki/Options
 
