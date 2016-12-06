@@ -43,7 +43,7 @@ All functions are separated, so you can execute them as needed.
 3. Build the project
 
   ```
-  gradlew build
+  ./gradlew build
   ```
 
 4. Go to the directory with the executalbe file (Or just copy the file) 
