@@ -52,20 +52,22 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        Iterator<String> domainsIterator = getParameters().getDomains().iterator();
-        List<String> failedDomains = new LinkedList<>();
+        if(getParameters().getDomains() != null) {
+            Iterator<String> domainsIterator = getParameters().getDomains().iterator();
+            List<String> failedDomains = new LinkedList<>();
 
-        while (domainsIterator.hasNext()) {
-            String domain = domainsIterator.next();
-            if (!verifiedDomains.contains(domain)) {
-                failedDomains.add(domain);
+            while (domainsIterator.hasNext()) {
+                String domain = domainsIterator.next();
+                if (!verifiedDomains.contains(domain)) {
+                    failedDomains.add(domain);
+                }
             }
-        }
 
-        if (failedDomains.size() > 0) {
-            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<List<String>>() {
-            }.getType());
-            result.add("failed_domains", failedDomainsJsonElement);
+            if (failedDomains.size() > 0) {
+                JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<List<String>>() {
+                }.getType());
+                result.add("failed_domains", failedDomainsJsonElement);
+            }
         }
     }
 }
