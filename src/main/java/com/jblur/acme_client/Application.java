@@ -12,6 +12,7 @@ import com.beust.jcommander.JCommander;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -28,6 +29,8 @@ public class Application {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
             context.reset();
+            if(!logDir.endsWith(File.separator))
+                logDir+= File.separator;
             context.putProperty("LOG_DIR", logDir);
             context.putProperty("LOG_LEVEL", logLevel);
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
