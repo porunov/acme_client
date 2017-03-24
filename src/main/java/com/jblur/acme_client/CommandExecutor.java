@@ -33,6 +33,9 @@ public class CommandExecutor {
             RegistrationCommand registrationCommand = new RegistrationCommand(parameters);
             result = executeACMECommand(registrationCommand);
             registrationManager = registrationCommand.getRegistrationManager();
+            if (registrationManager == null) {
+                LOG.error("Can not get account information.");
+            }
         } catch (AccountKeyNotFoundException e) {
             LOG.error("Key not found exception", e);
         }
@@ -53,7 +56,7 @@ public class CommandExecutor {
             if (registrationManager != null) {
                 new UpdateAgreementCommand(parameters, registrationManager).execute();
             } else {
-                LOG.warn("Can not create Registration. Can not update agreement");
+                LOG.warn("Can not create Registration. Can not update agreement.");
             }
         } catch (AccountKeyNotFoundException e) {
             LOG.warn("Can not update agreement.", e);
@@ -77,13 +80,20 @@ public class CommandExecutor {
             case Parameters.COMMAND_RENEW_CERTIFICATE:
                 registrationManager = getRegistrationManager();
                 if (registrationManager == null) {
-                    LOG.error("Can not get account information");
                     System.out.println(result);
                     return;
                 }
         }
 
         if (parameters.isWithAgreementUpdate()) {
+            //Strange. After the registration LE return not workable info. You need get registration one more time.
+            if(parameters.getCommand().equals(Parameters.COMMAND_REGISTER)){
+                registrationManager = getRegistrationManager();
+                if (registrationManager == null) {
+                    System.out.println(result);
+                    return;
+                }
+            }
             automaticallyUpdateAgreement(registrationManager);
         }
 

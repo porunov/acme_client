@@ -31,7 +31,7 @@ public class RenewCertificateCommand extends CertificateCommand {
 
         List<Certificate> savedCertificateList = getNotExpiredCertificates();
         if (savedCertificateList == null || savedCertificateList.size() == 0) {
-            LOG.info("Can not download certificates. Either you haven't generated one or they already expired.");
+            LOG.info("Can not renew certificates. Either you haven't generated one or they already expired.");
         } else {
             certificatesList.addAll(savedCertificateList);
         }

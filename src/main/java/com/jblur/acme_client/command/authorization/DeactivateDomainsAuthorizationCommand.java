@@ -26,7 +26,7 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
         List<Authorization> allAuthrizationsList = getNotExpiredAuthorizations();
         if (allAuthrizationsList == null) {
             LOG.error("Can not read file: " +
-                    Paths.get(getParameters().getWorkDir(), Parameters.AUTHORIZATION_URI_LIST).toString());
+                    AUTHORIZATION_FILE_PATH);
             error = true;
             return;
         }

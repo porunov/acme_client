@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,12 +23,13 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
 
     @Override
     public void commandExecution() {
-        List<String> failedAuthorizations = new LinkedList<>();
+        HashSet<String> succeedDomains = new HashSet<>();
+        HashSet<String> failedDomains = new HashSet<>();
 
         List<Authorization> authorizationList = getNotExpiredAuthorizations();
         if (authorizationList == null) {
             LOG.error("Can not read file: " +
-                    Paths.get(getParameters().getWorkDir(), Parameters.AUTHORIZATION_URI_LIST).toString());
+                    AUTHORIZATION_FILE_PATH);
             error = true;
             return;
         }
@@ -36,20 +38,28 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
             if (getParameters().getDomains() == null || getParameters().getDomains().contains(authorization.getDomain())) {
                 try {
                     writeChallengeByAuthorization(new AuthorizationManager(authorization));
+                    if (!succeedDomains.contains(authorization.getDomain()))
+                        succeedDomains.add(authorization.getDomain());
                 } catch (Exception e) {
                     LOG.error("Can not get challenges for authorization: " + authorization.getLocation()
                             + "\nDomain: " + authorization.getDomain(), e);
-                    failedAuthorizations.add(authorization.getLocation().toString());
+                    if (!failedDomains.contains(authorization.getDomain()))
+                        failedDomains.add(authorization.getDomain());
                 }
             }
         }
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        if (failedAuthorizations.size() > 0) {
-            JsonElement failedAuthorizationsJsonElement = getGson().toJsonTree(failedAuthorizations,
-                    new TypeToken<List<String>>() {}.getType());
-            result.add("failed_authorizations_to_download", failedAuthorizationsJsonElement);
+        for(String failedDomain:failedDomains)
+            if(succeedDomains.contains(failedDomain))
+                failedDomains.remove(failedDomain);
+        
+        if (failedDomains.size() > 0) {
+            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains,
+                    new TypeToken<HashSet<String>>() {}.getType());
+            result.add("failed_domains_to_download_authorizations", failedDomainsJsonElement);
+            error=true;
         }
     }
 }

@@ -67,7 +67,7 @@ public class IOManager {
     }
 
     public static String readString(String path) throws IOException {
-        return Files.readAllLines(Paths.get(path)).get(0);
+        return String.join("", Files.readAllLines(Paths.get(path)));
     }
 
     public static boolean isDirectoryExists(String path) {

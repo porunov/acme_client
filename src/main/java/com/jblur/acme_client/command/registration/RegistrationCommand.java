@@ -28,6 +28,10 @@ public class RegistrationCommand extends ACMECommand {
         } catch (AcmeException e) {
             LOG.error("Problem with registration/authorization", e);
             error = true;
+        } catch (Exception e){
+            LOG.error("Registration/authorization failed without getting an error for your provider." +
+                    "Please check if acme provider server url and your account private key are correct.");
+            error = true;
         }
     }
 

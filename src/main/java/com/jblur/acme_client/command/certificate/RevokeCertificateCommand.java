@@ -23,7 +23,7 @@ public class RevokeCertificateCommand extends CertificateCommand {
     public void commandExecution() {
         List<Certificate> certificatesList = getNotExpiredCertificates();
         if (certificatesList == null || certificatesList.size() == 0) {
-            LOG.error("Can not download certificates. Either you haven't generated one or they already expired.");
+            LOG.error("Can not revoke certificates. Either you haven't generated one or they already expired.");
             error = true;
             return;
         }

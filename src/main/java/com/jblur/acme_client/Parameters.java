@@ -4,6 +4,8 @@ import com.beust.jcommander.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class Parameters {
     public final static String COMMAND_DOWNLOAD_CHALLENGES = "download-challenges";
     public final static String COMMAND_VERIFY_DOMAINS = "verify-domains";
     public final static String COMMAND_GENERATE_CERTIFICATE = "generate-certificate";
-    public final static String COMMAND_DOWNLOAD_CERTIFICATES = "download-certificate";
+    public final static String COMMAND_DOWNLOAD_CERTIFICATES = "download-certificates";
     public final static String COMMAND_REVOKE_CERTIFICATE = "revoke-certificate";
     public final static String COMMAND_RENEW_CERTIFICATE = "renew-certificate";
     public final static String AUTHORIZATION_URI_LIST = "authorization_uri_list";
@@ -218,7 +220,7 @@ public class Parameters {
     private String command;
 
     private boolean checkFile(String path, String errMsg) {
-        if (!IOManager.isFileExists(path)) {
+        if (!new File(path).isFile()) {
             LOG.error(errMsg);
             return false;
         }
@@ -226,7 +228,7 @@ public class Parameters {
     }
 
     private boolean checkDir(String path, String errMsg) {
-        if (!IOManager.isDirectoryExists(path)) {
+        if (!Files.isDirectory(Paths.get(path))) {
             LOG.error(errMsg);
             return false;
         }
@@ -254,7 +256,7 @@ public class Parameters {
     }
 
     private boolean checkDomains() {
-        if (domains.size() == 0) {
+        if (domains == null || domains.size() == 0) {
             LOG.error("You haven't provided any domain name");
             return false;
         }

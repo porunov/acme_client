@@ -27,11 +27,12 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
     @Override
     public void commandExecution() {
         HashSet<String> verifiedDomains = new HashSet<>();
+        HashSet<String> failedDomains = new HashSet<>();
 
         List<Authorization> authorizationList = getNotExpiredAuthorizations();
         if (authorizationList == null) {
             LOG.error("Can not read file: " +
-                    Paths.get(getParameters().getWorkDir(), Parameters.AUTHORIZATION_URI_LIST).toString());
+                    AUTHORIZATION_FILE_PATH);
             error = true;
             return;
         }
@@ -39,35 +40,28 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
         for (Authorization authorization : authorizationList) {
             if (getParameters().getDomains() == null || getParameters().getDomains().contains(authorization.getDomain())) {
                 try {
-                    new ChallengeManager(authorization, getChallengeType(), getSession()).validateChallenge(60000);
+                    new ChallengeManager(authorization, getChallengeType()).validateChallenge(60000);
                     if (!verifiedDomains.contains(authorization.getDomain()))
                         verifiedDomains.add(authorization.getDomain());
                 } catch (TimeoutException ex) {
                     LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified. Time out exception", ex);
+                    if (!failedDomains.contains(authorization.getDomain()))
+                        failedDomains.add(authorization.getDomain());
                 } catch (AcmeException ex) {
                     LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified.", ex);
+                    if (!failedDomains.contains(authorization.getDomain()))
+                        failedDomains.add(authorization.getDomain());
                 }
             }
         }
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        if(getParameters().getDomains() != null) {
-            Iterator<String> domainsIterator = getParameters().getDomains().iterator();
-            List<String> failedDomains = new LinkedList<>();
-
-            while (domainsIterator.hasNext()) {
-                String domain = domainsIterator.next();
-                if (!verifiedDomains.contains(domain)) {
-                    failedDomains.add(domain);
-                }
-            }
-
-            if (failedDomains.size() > 0) {
-                JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<List<String>>() {
-                }.getType());
-                result.add("failed_domains", failedDomainsJsonElement);
-            }
+        if (failedDomains.size() > 0) {
+            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<HashSet<String>>() {
+            }.getType());
+            result.add("failed_domains", failedDomainsJsonElement);
+            error=true;
         }
     }
 }

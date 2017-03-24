@@ -27,7 +27,7 @@ public class UpdateAgreementCommand extends ACMECommand {
     public void commandExecution() {
         try {
             URI agreementURI = (getParameters().getAgreementUrl() == null) ?
-                    registrationManagement.getRegistration().getAgreement() :
+                    this.registrationManagement.getRegistration().getAgreement() :
                     new URL(getParameters().getAgreementUrl()).toURI();
             registrationManagement.modifyAgreement(agreementURI);
         } catch (IOException e) {
@@ -38,6 +38,9 @@ public class UpdateAgreementCommand extends ACMECommand {
             error = true;
         } catch (AcmeException e) {
             LOG.error("Can not modify agreement", e);
+            error = true;
+        } catch (NullPointerException e){
+            LOG.error("Agreement haven't been updated because your provider haven't returned an agreement URL.", e);
             error = true;
         }
     }
