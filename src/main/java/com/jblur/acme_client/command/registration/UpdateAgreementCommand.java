@@ -31,13 +31,13 @@ public class UpdateAgreementCommand extends ACMECommand {
                     new URL(getParameters().getAgreementUrl()).toURI();
             registrationManagement.modifyAgreement(agreementURI);
         } catch (IOException e) {
-            LOG.error("Can not get agreement URL.", e);
+            LOG.error("Cannot get agreement URL.", e);
             error = true;
         } catch (URISyntaxException e) {
             LOG.error("You have provided incorrect agreement URL.", e);
             error = true;
         } catch (AcmeException e) {
-            LOG.error("Can not modify agreement", e);
+            LOG.error("Cannot modify agreement", e);
             error = true;
         } catch (NullPointerException e){
             LOG.error("Agreement haven't been updated because your provider haven't returned an agreement URL.", e);

@@ -43,10 +43,10 @@ public class GenerateCertificateCommand extends CertificateCommand {
 
             error = error || !writeCertificateList(certificateList);
         } catch (IOException e) {
-            LOG.error("Can not read csr: " + getParameters().getCsr(), e);
+            LOG.error("Cannot read csr: " + getParameters().getCsr(), e);
             error = true;
         } catch (AcmeException e) {
-            LOG.error("Can not get certificate. Check if your domains of the certificate are verified", e);
+            LOG.error("Cannot get certificate. Check if your domains of the certificate are verified", e);
             error = true;
         }
     }

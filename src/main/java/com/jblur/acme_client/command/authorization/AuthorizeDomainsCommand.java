@@ -36,7 +36,7 @@ public class AuthorizeDomainsCommand extends AuthorizationCommand {
                 authorizationList.add(authorizationManagement.getAuthorization());
                 writeChallengeByAuthorization(authorizationManagement);
             } catch (Exception ex) {
-                LOG.error("Can not authorize domain: " + domain + "\n" +
+                LOG.error("Cannot authorize domain: " + domain + "\n" +
                         "It will be skipped", ex);
                 error = true;
                 failedDomains.add(domain);

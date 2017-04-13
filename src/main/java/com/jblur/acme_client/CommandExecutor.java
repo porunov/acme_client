@@ -34,7 +34,7 @@ public class CommandExecutor {
             result = executeACMECommand(registrationCommand);
             registrationManager = registrationCommand.getRegistrationManager();
             if (registrationManager == null) {
-                LOG.error("Can not get account information.");
+                LOG.error("Cannot get account information.");
             }
         } catch (AccountKeyNotFoundException e) {
             LOG.error("Key not found exception", e);
@@ -48,7 +48,7 @@ public class CommandExecutor {
     }
 
     private void automaticallyUpdateAgreement(RegistrationManager registrationManager) {
-        LOG.info("Trying yo update agreement");
+        LOG.info("Trying to update agreement");
         try {
             if (registrationManager == null) {
                 registrationManager = getRegistrationManager();
@@ -56,10 +56,10 @@ public class CommandExecutor {
             if (registrationManager != null) {
                 new UpdateAgreementCommand(parameters, registrationManager).execute();
             } else {
-                LOG.warn("Can not create Registration. Can not update agreement.");
+                LOG.warn("Cannot create Registration. Cannot update agreement.");
             }
         } catch (AccountKeyNotFoundException e) {
-            LOG.warn("Can not update agreement.", e);
+            LOG.warn("Cannot update agreement.", e);
         }
     }
 

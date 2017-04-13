@@ -14,7 +14,7 @@ import java.security.KeyPair;
 public abstract class ACMECommand implements Command {
     private static final Logger LOG = LoggerFactory.getLogger(ACMECommand.class);
     public boolean error = false;
-    public JsonObject result = new JsonObject();
+    protected JsonObject result = new JsonObject();
     private Parameters parameters;
     private Session session;
     private Gson gson = new Gson();
@@ -33,7 +33,7 @@ public abstract class ACMECommand implements Command {
         try {
             accountKey = IOManager.readKeyPairFromPrivateKey(parameters.getAccountKey());
         } catch (IOException e) {
-            LOG.error("Can not read account key. Make sure that it is in a proper format.", e);
+            LOG.error("Cannot read account key. Make sure that it is in a proper format.", e);
         }
         return accountKey;
     }
@@ -42,7 +42,7 @@ public abstract class ACMECommand implements Command {
         return this.parameters;
     }
 
-    public Session getSession() {
+    protected Session getSession() {
         return this.session;
     }
 

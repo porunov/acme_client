@@ -49,7 +49,7 @@ public abstract class AuthorizationCommand extends ACMECommand {
                     IOManager.readString(AUTHORIZATION_FILE_PATH),
                     listOfAuthorizationLocationsObject);
         } catch (Exception e) {
-            LOG.warn("Your file can not be read. It has a bad structure", e);
+            LOG.warn("Your file cannot be read. It has a bad structure", e);
             return null;
         }
 
@@ -93,7 +93,7 @@ public abstract class AuthorizationCommand extends ACMECommand {
             IOManager.writeString(AUTHORIZATION_FILE_PATH,
                     getGson().toJson(authorizationLocationList, listOfAuthorizationLocationsObject));
         } catch (IOException e) {
-            LOG.error("Can not write authorization list to file: " + AUTHORIZATION_FILE_PATH
+            LOG.error("Cannot write authorization list to file: " + AUTHORIZATION_FILE_PATH
                     + "\n Please check permissions of the file.", e);
             return false;
         }

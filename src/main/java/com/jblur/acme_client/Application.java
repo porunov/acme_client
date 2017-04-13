@@ -1,9 +1,5 @@
 package com.jblur.acme_client;
 
-/**
- * Created by alex on 9/1/16.
- */
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
@@ -96,7 +92,7 @@ public class Application {
             try {
                 Files.createDirectories(Paths.get(parameters.getLogDir()));
             } catch (IOException e) {
-                LOG.error("Can not create log dir: " + parameters.getLogDir() + "\n . Please check permissions", e);
+                LOG.error("Cannot create log dir: " + parameters.getLogDir() + "\n . Please check permissions", e);
                 System.out.print(RESULT_ERROR);
                 return;
             }

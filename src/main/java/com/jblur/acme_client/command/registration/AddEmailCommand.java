@@ -23,7 +23,7 @@ public class AddEmailCommand extends ACMECommand {
         try {
             registrationManagement.addContact(getParameters().getEmail());
         } catch (AcmeException e) {
-            LOG.error("Can not add email", e);
+            LOG.error("Cannot add email", e);
             error = true;
         }
     }

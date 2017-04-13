@@ -30,7 +30,7 @@ public class GetAgreementURLCommand extends ACMECommand {
             }.getType());
             result.add("agreement_url", agreementUrlJsonElement);
         } catch (Exception e) {
-            LOG.error("Can not get an agreement URL", e);
+            LOG.error("Cannot get an agreement URL", e);
             error = true;
         }
     }

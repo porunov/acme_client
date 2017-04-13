@@ -25,7 +25,7 @@ public class DeactivateAccountCommand extends ACMECommand {
         try {
             registrationManagement.deactivateAccount();
         } catch (AcmeException e) {
-            LOG.error("Can not deactivate account", e);
+            LOG.error("Cannot deactivate account", e);
             error = true;
         }
     }

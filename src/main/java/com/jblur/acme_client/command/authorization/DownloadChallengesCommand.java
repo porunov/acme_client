@@ -28,7 +28,7 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
 
         List<Authorization> authorizationList = getNotExpiredAuthorizations();
         if (authorizationList == null) {
-            LOG.error("Can not read file: " +
+            LOG.error("Cannot read file: " +
                     AUTHORIZATION_FILE_PATH);
             error = true;
             return;
@@ -41,7 +41,7 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
                     if (!succeedDomains.contains(authorization.getDomain()))
                         succeedDomains.add(authorization.getDomain());
                 } catch (Exception e) {
-                    LOG.error("Can not get challenges for authorization: " + authorization.getLocation()
+                    LOG.error("Cannot get challenges for authorization: " + authorization.getLocation()
                             + "\nDomain: " + authorization.getDomain(), e);
                     if (!failedDomains.contains(authorization.getDomain()))
                         failedDomains.add(authorization.getDomain());

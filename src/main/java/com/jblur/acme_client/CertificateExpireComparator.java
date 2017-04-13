@@ -16,13 +16,13 @@ public class CertificateExpireComparator implements Comparator<Certificate> {
         try {
             c1expire = c1.download().getNotAfter().getTime();
         } catch (AcmeException e) {
-            LOG.warn("Can fetch x509 cert from certificate: " + c1.getLocation().toString(), e);
+            LOG.warn("Cannot fetch x509 cert from certificate: " + c1.getLocation().toString(), e);
         }
 
         try {
             c2expire = c2.download().getNotAfter().getTime();
         } catch (AcmeException e) {
-            LOG.warn("Can fetch x509 cert from certificate: " + c2.getLocation().toString(), e);
+            LOG.warn("Cannot fetch x509 cert from certificate: " + c2.getLocation().toString(), e);
         }
 
         if (c1expire > c2expire) {

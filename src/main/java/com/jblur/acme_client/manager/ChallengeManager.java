@@ -26,7 +26,7 @@ public class ChallengeManager {
         try {
             challenge.rebind(session);
         } catch (Exception ex) {
-            LOG.warn("Can not rebind challenge: " + challenge.getLocation() + " to session: " +
+            LOG.warn("Cannot rebind challenge: " + challenge.getLocation() + " to session: " +
                     session.getServerUri().toString(), ex);
         }
     }

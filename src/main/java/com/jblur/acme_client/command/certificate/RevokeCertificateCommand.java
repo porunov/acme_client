@@ -23,7 +23,7 @@ public class RevokeCertificateCommand extends CertificateCommand {
     public void commandExecution() {
         List<Certificate> certificatesList = getNotExpiredCertificates();
         if (certificatesList == null || certificatesList.size() == 0) {
-            LOG.error("Can not revoke certificates. Either you haven't generated one or they already expired.");
+            LOG.error("Cannot revoke certificates. Either you haven't generated one or they already expired.");
             error = true;
             return;
         }
@@ -39,7 +39,7 @@ public class RevokeCertificateCommand extends CertificateCommand {
                     try {
                         certificate.revoke();
                     } catch (Exception e) {
-                        LOG.warn("Can not revoke certificate: " + certificate.getLocation(), e);
+                        LOG.warn("Cannot revoke certificate: " + certificate.getLocation(), e);
                         failedCertificates.add(certificate.getLocation().toString());
                         error = true;
                     }
@@ -47,7 +47,7 @@ public class RevokeCertificateCommand extends CertificateCommand {
                     newCertificatesList.add(certificate);
                 }
             } catch (AcmeException e) {
-                LOG.error("Can not check certificate: " + certificate.getLocation(), e);
+                LOG.error("Cannot check certificate: " + certificate.getLocation(), e);
             }
         }
         error = error | !writeCertificateList(newCertificatesList);

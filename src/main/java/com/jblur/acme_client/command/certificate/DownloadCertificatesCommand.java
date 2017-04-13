@@ -24,7 +24,7 @@ public class DownloadCertificatesCommand extends CertificateCommand {
 
         List<Certificate> savedCertificateList = getNotExpiredCertificates();
         if (savedCertificateList == null || savedCertificateList.size() == 0) {
-            LOG.error("Can not download certificates. Either you haven't generated one or they already expired.");
+            LOG.error("Cannot download certificates. Either you haven't generated one or they already expired.");
             error = true;
             return;
         }

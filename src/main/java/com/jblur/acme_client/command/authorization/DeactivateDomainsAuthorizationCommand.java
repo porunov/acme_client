@@ -25,7 +25,7 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
 
         List<Authorization> allAuthrizationsList = getNotExpiredAuthorizations();
         if (allAuthrizationsList == null) {
-            LOG.error("Can not read file: " +
+            LOG.error("Cannot read file: " +
                     AUTHORIZATION_FILE_PATH);
             error = true;
             return;
@@ -40,7 +40,7 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
                 try {
                     authorization.deactivate();
                 } catch (AcmeException e) {
-                    LOG.error("Can not deactivate authorization", e);
+                    LOG.error("Cannot deactivate authorization", e);
                     failedDomains.add(authorization.getDomain());
                     error = true;
                 }

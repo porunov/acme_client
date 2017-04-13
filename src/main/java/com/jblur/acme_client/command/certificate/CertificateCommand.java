@@ -44,13 +44,13 @@ public abstract class CertificateCommand extends ACMECommand {
             IOManager.writeX509CertificateChain(certificateManagement.downloadFullChainCertificate(),
                     Paths.get(getParameters().getCertDir(), "fullchain" + suffix + ".pem").toString());
         } catch (IOException e) {
-            LOG.error("Can not write certificate into dir: " + getParameters().getCertDir(), e);
+            LOG.error("Cannot write certificate into dir: " + getParameters().getCertDir(), e);
             error = true;
         } catch (CertificateEncodingException e) {
-            LOG.error("Can not write certificate. Encoding exception.", e);
+            LOG.error("Cannot write certificate. Encoding exception.", e);
             error = true;
         } catch (AcmeException e) {
-            LOG.error("Can not download certificate: " + certificateManagement.getCertificate().getLocation(), e);
+            LOG.error("Cannot download certificate: " + certificateManagement.getCertificate().getLocation(), e);
             error = true;
         }
         return !error;
@@ -66,7 +66,7 @@ public abstract class CertificateCommand extends ACMECommand {
             IOManager.writeString(CERTIFICATE_FILE_PATH,
                     getGson().toJson(certificateLocationList, listOfCertificateLocationObject));
         } catch (IOException e) {
-            LOG.error("Can not write certificate list to file: " + Paths.get(getParameters().getWorkDir(),
+            LOG.error("Cannot write certificate list to file: " + Paths.get(getParameters().getWorkDir(),
                     Parameters.CERTIFICATE_URI_LIST).toString() + "\n Please check permissions of the file.", e);
             return false;
         }
@@ -86,7 +86,7 @@ public abstract class CertificateCommand extends ACMECommand {
                     IOManager.readString(CERTIFICATE_FILE_PATH),
                     listOfCertificateLocationObject);
         } catch (Exception e) {
-            LOG.warn("Your file can not be read. It has a bad structure", e);
+            LOG.warn("Your file cannot be read. It has a bad structure", e);
             return null;
         }
 
@@ -106,13 +106,13 @@ public abstract class CertificateCommand extends ACMECommand {
                     certificateList.add(certificate);
                 }
             } catch (AcmeException e) {
-                LOG.warn("Can not download a certificate: " + certificate.getLocation(), e);
+                LOG.warn("Cannot download a certificate: " + certificate.getLocation(), e);
                 certificateList.add(certificate);
             } catch (NullPointerException e){
                 LOG.warn("Found NULL certificate in the file " +
-                        CERTIFICATE_FILE_PATH, e);
+                        CERTIFICATE_FILE_PATH+". Remove NULL certificate.", e);
             } catch (Exception e) {
-                LOG.warn("Certificate "+certificate.getLocation().toString()+" can not be rebinded. " +
+                LOG.warn("Certificate "+certificate.getLocation().toString()+" cannot be rebinded. " +
                         "Please check internet connectivity or certificate existence.", e);
                 certificateList.add(certificate);
             }

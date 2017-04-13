@@ -30,8 +30,9 @@ public class RenewCertificateCommand extends CertificateCommand {
         List<Certificate> certificatesList = new LinkedList<>();
 
         List<Certificate> savedCertificateList = getNotExpiredCertificates();
-        if (savedCertificateList == null || savedCertificateList.size() == 0) {
-            LOG.info("Can not renew certificates. Either you haven't generated one or they already expired.");
+        if (savedCertificateList == null) {
+            LOG.info("Cannot read your certificates. Either you haven't generated one or the certificate file "+
+                    CERTIFICATE_FILE_PATH+" is corrupted.");
         } else {
             certificatesList.addAll(savedCertificateList);
         }
@@ -45,7 +46,7 @@ public class RenewCertificateCommand extends CertificateCommand {
                     break;
                 }
             } catch (AcmeException e) {
-                LOG.warn("Can not read certificate: " + certificate.getLocation(), e);
+                LOG.warn("Cannot read certificate: " + certificate.getLocation(), e);
             }
         }
 
@@ -53,16 +54,16 @@ public class RenewCertificateCommand extends CertificateCommand {
 
         if (renew) {
             try {
-                CertificateManager certificateManagement = certificateManagement = new CertificateManager(
+                CertificateManager certificateManagement = new CertificateManager(
                         IOManager.readCSR(getParameters().getCsr()),
                         registrationManager.getRegistration());
                 certificatesList.add(certificateManagement.getCertificate());
                 error = error || !writeCertificate(certificateManagement, "");
             } catch (AcmeException e) {
-                LOG.error("Can not get certificate. Check if your domains of the certificate are verified", e);
+                LOG.error("Cannot get certificate. Check if your domains of the certificate are verified", e);
                 error = true;
             } catch (IOException e) {
-                LOG.error("Can not read csr: " + getParameters().getCsr(), e);
+                LOG.error("Cannot read csr: " + getParameters().getCsr(), e);
                 error = true;
             }
         }

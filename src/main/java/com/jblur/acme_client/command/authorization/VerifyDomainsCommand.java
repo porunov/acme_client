@@ -31,7 +31,7 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
 
         List<Authorization> authorizationList = getNotExpiredAuthorizations();
         if (authorizationList == null) {
-            LOG.error("Can not read file: " +
+            LOG.error("Cannot read file: " +
                     AUTHORIZATION_FILE_PATH);
             error = true;
             return;
