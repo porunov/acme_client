@@ -48,60 +48,60 @@ public class Parameters {
                 "If you use Letsencrypt's production server for testing you can reach limits " +
                 "which are set by Letsencrypt (or your ACME provider).\n");
         MAIN_USAGE.append("\nCommands:\n");
-        MAIN_USAGE.append("\n1) register - create a new account.\n" +
+        MAIN_USAGE.append("\n1) "+COMMAND_REGISTER+" - create a new account.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --email\n");
-        MAIN_USAGE.append("\n2) get-agreement-url - return a JSON object with 'agreement_ur' key where value " +
+        MAIN_USAGE.append("\n2) "+COMMAND_GET_AGREEMENT_URL+" - return a JSON object with 'agreement_ur' key where value " +
                 "is the most up to date agreement. You must accept agreement if you want to use a service.\n" +
                 "This command include `agreement_url` into JSON response " +
                 "(I.e. {\"status\":\"ok\", \"agreement_url\":\"https://...\"}).\n" +
                 "\tRequires parameters: --account-key\n");
-        MAIN_USAGE.append("\n3) update-agreement - accept agreement. If you do not specify " +
+        MAIN_USAGE.append("\n3) "+COMMAND_UPDATE_AGREEMENT+" - accept agreement. If you do not specify " +
                 "'--agreement-url' you will automatically agree with the newest agreement.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --agreement-url\n");
-        MAIN_USAGE.append("\n4) add-email - add email to your account (some providers can recover your email" +
+        MAIN_USAGE.append("\n4) "+COMMAND_ADD_EMAIL+" - add email to your account (some providers can recover your email" +
                 " if you lose your account private key).\n" +
                 "\tRequires parameters: --account-key, --email\n");
-        MAIN_USAGE.append("\n5) deactivate-account - deactivate your account\n" +
+        MAIN_USAGE.append("\n5) "+COMMAND_DEACTIVATE_ACCOUNT+" - deactivate your account\n" +
                 "\tRequires parameters: --account-key\n");
-        MAIN_USAGE.append("\n6) authorize-domains  authorize specified domains. You must specify all " +
+        MAIN_USAGE.append("\n6) "+COMMAND_AUTHORIZE_DOMAINS+"  authorize specified domains. You must specify all " +
                 "domains which you use in CSR (i.e. main domain and alternative domain names).\n" +
                 "If you get \"status\":\"error\" this command may include domains which were not authorized " +
                 "(\"failed_domains\":[\"example.com\", \"blog.example.com\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key, --domain\n" +
                 "\tOptional parameters: --challenge-type\n");
-        MAIN_USAGE.append("\n7) deactivate-domain-authorization - deactive domain authorization for specific " +
+        MAIN_USAGE.append("\n7) "+COMMAND_DEACTIVATE_DOMAIN_AUTHORIZATION+" - deactive domain authorization for specific " +
                 "domain address (or for all if not specified) if you want to remove/sell your domain addresses.\n" +
                 "If you get \"status\":\"error\" this command may include domains which were not deactivated " +
                 "(\"failed_domains\":[\"example.com\", \"blog.example.com\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --domain\n" +
                 "\tMust have a file in working dir: authorization_uri_list\n");
-        MAIN_USAGE.append("\n8) download-challenges - Download challenges from your authorizations.\n" +
+        MAIN_USAGE.append("\n8) "+COMMAND_DOWNLOAD_CHALLENGES+" - Download challenges from your authorizations.\n" +
                 "If you get \"status\":\"error\" this command may include authorizations' locations from " +
                 "which challenges wasn't been downloaded (\"failed_authorizations_to_download" +
                 "\":[\"https://...\", \"https://...\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --domain, --challenge-type\n" +
                 "\tMust have file in working dir: authorization_uri_list\n");
-        MAIN_USAGE.append("\n9) verify-domains - Check your challenges and verify your domains.\n" +
+        MAIN_USAGE.append("\n9) "+COMMAND_VERIFY_DOMAINS+" - Check your challenges and verify your domains.\n" +
                 "If you get \"status\":\"error\" this command may include domains which were not verified " +
                 "(\"failed_domains\":[\"example.com\", \"blog.example.com\"]). You can see the reason in your log file.\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --domain\n" +
                 "\tMust have a file in working dir: authorization_uri_list\n");
-        MAIN_USAGE.append("\n10) generate-certificate - Generate new certificate.\n" +
+        MAIN_USAGE.append("\n10) "+COMMAND_GENERATE_CERTIFICATE+" - Generate new certificate.\n" +
                 "\tRequires parameters: --account-key, --csr\n" +
                 "\tOptional parameters: --cert-dir\n");
-        MAIN_USAGE.append("\n11) download-certificate - Download your certificates which you have created earlier. " +
+        MAIN_USAGE.append("\n11) "+COMMAND_DOWNLOAD_CERTIFICATES+" - Download your certificates which you have created earlier. " +
                 "If you specify '--newest-only' then you will download only newest certificate. Without that parameter " +
                 "you will download all certificates sorted by expiration date (i.e. cert_0.pem is the newest " +
                 "and cert_15.pem is the oldest).\n" +
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --newest-only\n" +
                 "\tMust have a file in working dir: certificate_uri_list\n");
-        MAIN_USAGE.append("\n12) revoke-certificate - revoke certificates. You can revoke either all your " +
+        MAIN_USAGE.append("\n12) "+COMMAND_REVOKE_CERTIFICATE+" - revoke certificates. You can revoke either all your " +
                 "certificates or by time criteria. All certificates will be removed which are started after " +
                 "'--from-time' and which will be expired till '--to-time'. " +
                 "These parameters are written as GMT milliseconds.\n" +
@@ -111,7 +111,7 @@ public class Parameters {
                 "\tRequires parameters: --account-key\n" +
                 "\tOptional parameters: --from-time, --to-time\n" +
                 "\tMust have a file in working dir: certificate_uri_list\n");
-        MAIN_USAGE.append("\n13) renew-certificate - Renew certificate either for existing CSR or for new CSR. " +
+        MAIN_USAGE.append("\n13) "+COMMAND_RENEW_CERTIFICATE+" - Renew certificate either for existing CSR or for new CSR. " +
                 "Will create a new certificate only if all your certificates will expire after '--max-expiration-time'. " +
                 "'--max-expiration-time' is a time written in milliseconds " +
                 "(By default it is 2592000000 which is equal to 30 days).\n" +
@@ -215,7 +215,7 @@ public class Parameters {
     @Parameter(names = {"--command"}, description = "Command to execute. Command can be on of the next commands: " +
             "register, get-agreement-url, update-agreement, add-email, deactivate-account, authorize-domains, " +
             "deactivate-domain-authorization, download-challenges, verify-domains, generate-certificate," +
-            "download-certificate, revoke-certificate, renew-certificate. " +
+            "download-certificates, revoke-certificate, renew-certificate. " +
             "Read below 'Main commands' section to know how to use these commands.")
     private String command;
 
