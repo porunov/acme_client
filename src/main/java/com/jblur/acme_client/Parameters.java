@@ -174,7 +174,7 @@ public class Parameters {
             "A certificate will be renewed only when your existed certificates will expire after max-expiration-time." +
             " By default it is 2592000000 milliseconds which is equal to 30 days. It means that when you call " +
             "'renew-certificate' command it will be renewed only if your certificate will expire in 30 days.")
-    private long maxExpirationTime = 2592000000l;
+    private long maxExpirationTime = 2592000000L;
 
     @Parameter(names = {"--log-level"}, description = "Log level. Can be one of the next: " +
             "'OFF' - without logs; " +
@@ -220,7 +220,7 @@ public class Parameters {
     private String command;
 
     private boolean checkFile(String path, String errMsg) {
-        if (!new File(path).isFile()) {
+        if (path==null || !new File(path).isFile()) {
             LOG.error(errMsg);
             return false;
         }
@@ -228,7 +228,7 @@ public class Parameters {
     }
 
     private boolean checkDir(String path, String errMsg) {
-        if (!Files.isDirectory(Paths.get(path))) {
+        if (path==null || !Files.isDirectory(Paths.get(path))) {
             LOG.error(errMsg);
             return false;
         }
@@ -303,7 +303,7 @@ public class Parameters {
     public boolean verifyRequirements() {
 
         if (getCommand() == null) {
-            LOG.error("You must choose one of the commands you want to execute (--help)");
+            LOG.error("No command specified. You must specify a command to execute, use --help for a list of available commands.");
             return false;
         }
 
@@ -350,7 +350,7 @@ public class Parameters {
                 correct = checkAccountKey() && checkCsr() && checkWorkDir() && checkCertDir();
                 break;
             default:
-                LOG.error("You must choose one of the commands you want to execute (--help)");
+                LOG.error("Command '" + command + "' not recognized. Use --help for a list of available commands");
                 correct = false;
         }
 
