@@ -34,7 +34,7 @@ No installation needed. The application is packed into a single executable JAR f
 
 ## Usage
 
-See the [wiki](./wiki/) for information on how to use the application.
+See the [wiki](../../wiki/) for information on how to use the application.
 
 
 -----
