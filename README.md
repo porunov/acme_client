@@ -1,11 +1,11 @@
-# Java ACME Client for manual step-by-step SSL certificate management.
+# Porunov Java ACME Client (PJAC)
+### An ACME client application for manual step-by-step SSL certificate management.
 
-### A CLI management agent designed for use with your own automation tools (ansible, puppet, chef, saltstack, etc.). Also suitable if you want to automate certificate management with your own scripts/programs/crond-jobs etc.).
+PJAC is a CLI management agent designed for use with your own automation tools (ansible, puppet, chef, saltstack, etc.). Also suitable if you want to automate certificate management with your own scripts/programs/crond-jobs etc.).
 
 ACME is a protocol that a Certificate Authority (CA) and an applicant can use to automate the process of verification and certificate issuance.
 
-This application is based on Java ACME library implementation: https://github.com/shred/acme4j  
-If you need more options or your own implementation you can use that library.
+This application is based on [acme4j](https://github.com/shred/acme4j), a Java ACME library implementation. If you need more options or your own implementation you can use that library.
 
 ## Supported functions
 * Account creation
