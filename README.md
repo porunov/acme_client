@@ -16,7 +16,7 @@ If you need more options or your own implementation you can use that library.
 * Domain authorization
 * Domain authorization deactivation
 * Challenge download (supports both HTTP and DNS challenges)
-* Domain verification
+* Domain authorization verification
 * Certificate generation
 * Certificate download
 * Certificate renewal
