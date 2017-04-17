@@ -13,9 +13,9 @@ If you need more options or your own implementation you can use that library.
 * E-mail address association
 * Subscriber Agreement URL retrieval
 * Subscriber Agreement (auto) update
-* Domain authorization
+* Domain authorization (supports both HTTP and DNS challenges)
 * Domain authorization deactivation
-* Challenge download (supports both HTTP and DNS challenges)
+* Challenge download
 * Domain authorization verification
 * Certificate generation
 * Certificate download
