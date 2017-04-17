@@ -123,7 +123,7 @@ public class Parameters {
     @Parameter(names = "--help", help = true, description = "Show help.")
     private boolean help;
 
-    @Parameter(names = { "--version", "-v" }, description = "Show version of the acme client.")
+    @Parameter(names = { "--version", "-v" }, help = true, description = "Show version of the acme client.")
     private boolean version;
 
     @Parameter(names = "--newest-only", help = true, description = "If you want to download only the newest " +
