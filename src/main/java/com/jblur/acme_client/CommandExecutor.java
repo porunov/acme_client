@@ -103,13 +103,8 @@ public class CommandExecutor {
 
         if (parameters.isWithAgreementUpdate()) {
             //Strange. After the registration LE return not workable info. You need get registration one more time.
-            if(parameters.getCommand().equals(Parameters.COMMAND_REGISTER)){
-                registrationManager = getRegistrationManager();
-                if (registrationManager == null) {
-                    System.out.println(result);
-                    return;
-                }
-            }
+            registrationManager = (parameters.getCommand().equals(Parameters.COMMAND_REGISTER))?
+                    null:registrationManager;
             automaticallyUpdateAgreement(registrationManager);
         }
 
@@ -158,10 +153,10 @@ public class CommandExecutor {
             }
         } catch (AccountKeyNotFoundException e) {
             LOG.error("Key not found exception", e);
+            result=RESULT_ERROR;
         }
 
         System.out.println(result);
-
     }
 
 }

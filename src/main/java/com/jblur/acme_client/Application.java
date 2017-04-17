@@ -24,6 +24,7 @@ public class Application {
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
     private static final String LOGBACK_CONF = "logback_pattern.xml";
+    private static final String APPLICATION_PROPS = "application.properties";
 
     private static ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
@@ -77,6 +78,19 @@ public class Application {
             System.out.println(usage.toString());
             String format = "%10s%n";
             System.out.format(format, Parameters.MAIN_USAGE.toString());
+            return;
+        }
+
+        if(parameters.isVersion()) {
+            Properties prop = new Properties();
+            try {
+                prop.load(classloader.getResourceAsStream(APPLICATION_PROPS));
+                System.out.println(prop.getProperty("version"));
+            }
+            catch (IOException ex) {
+                LOG.error("Cannot get version of the acme client.", ex);
+                System.out.println(CommandExecutor.RESULT_ERROR);
+            }
             return;
         }
 

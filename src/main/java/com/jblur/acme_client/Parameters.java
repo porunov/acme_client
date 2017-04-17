@@ -123,9 +123,12 @@ public class Parameters {
     @Parameter(names = "--help", help = true, description = "Show help.")
     private boolean help;
 
+    @Parameter(names = { "--version", "-v" }, description = "Show version of the acme client.")
+    private boolean version;
+
     @Parameter(names = "--newest-only", help = true, description = "If you want to download only the newest " +
             "certificate you can use this parameter. Otherwise you will download all your certificates.")
-    private boolean newsetOnly;
+    private boolean newestOnly;
 
     @Parameter(names = {"--work-dir", "-w"}, description = "Working directory to place authorization information " +
             "and certificates information (i.e. files 'authorization_uri_list' and 'certificate_uri_list'). " +
@@ -361,6 +364,10 @@ public class Parameters {
         return help;
     }
 
+    public boolean isVersion() {
+        return version;
+    }
+
     public String getWorkDir() {
         return workDir;
     }
@@ -437,8 +444,8 @@ public class Parameters {
         return withAgreementUpdate;
     }
 
-    public boolean isNewsetOnly() {
-        return newsetOnly;
+    public boolean isNewestOnly() {
+        return newestOnly;
     }
 
     public String getLogLevel() {

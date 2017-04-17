@@ -31,7 +31,7 @@ public class DownloadCertificatesCommand extends CertificateCommand {
 
         certificateSet.addAll(savedCertificateList);
 
-        if (getParameters().isNewsetOnly()) {
+        if (getParameters().isNewestOnly()) {
             CertificateManager certificateManagement = new CertificateManager(certificateSet.first());
             error = error || !writeCertificate(certificateManagement, "");
         } else {
