@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 public class Application {
 
@@ -23,14 +25,7 @@ public class Application {
 
     private static final String LOGBACK_CONF = "logback_pattern.xml";
 
-    private static final String RESULT_ERROR;
-
-    static {
-        Gson gson = new Gson();
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.add("status", gson.toJsonTree("error"));
-        RESULT_ERROR = gson.toJson(jsonObject);
-    }
+    private static ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
     private static void configureLogger(String logDir, String logLevel, String logbackConf) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -42,7 +37,7 @@ public class Application {
                 logDir+= File.separator;
             context.putProperty("LOG_DIR", logDir);
             context.putProperty("LOG_LEVEL", logLevel);
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
             InputStream is = classloader.getResourceAsStream(logbackConf);
             configurator.doConfigure(is);
         } catch (JoranException je) {
@@ -65,13 +60,12 @@ public class Application {
 
     public static void main(String[] args) throws URISyntaxException, IOException {
         Parameters parameters = new Parameters();
-
         JCommander jCommander;
         try{
             jCommander = new JCommander(parameters, args);
         }catch (Exception e){
             LOG.error("An error occurred during parameters parsing.", e);
-            System.out.print(RESULT_ERROR);
+            System.out.print(CommandExecutor.RESULT_ERROR);
             return;
         }
 
@@ -93,7 +87,7 @@ public class Application {
                 Files.createDirectories(Paths.get(parameters.getLogDir()));
             } catch (IOException e) {
                 LOG.error("Cannot create log dir: " + parameters.getLogDir() + "\n . Please check permissions", e);
-                System.out.print(RESULT_ERROR);
+                System.out.print(CommandExecutor.RESULT_ERROR);
                 return;
             }
             LOG.info("Log directory " + parameters.getLogDir() + " is successfully created");
@@ -106,7 +100,7 @@ public class Application {
 
 
         if (!parameters.verifyRequirements()) {
-            System.out.print(RESULT_ERROR);
+            System.out.print(CommandExecutor.RESULT_ERROR);
             return;
         }
 

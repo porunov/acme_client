@@ -55,6 +55,7 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
             JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<List<String>>() {
             }.getType());
             result.add("failed_domains", failedDomainsJsonElement);
+            error=true;
         }
     }
 

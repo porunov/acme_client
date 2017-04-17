@@ -19,6 +19,7 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public abstract class AuthorizationCommand extends ACMECommand {
 
         for (Authorization authorization : oldAuthorizationList) {
             try {
-                if (authorization.getExpires().getTime() > System.currentTimeMillis()) {
+                if (authorization.getExpires().isAfter(Instant.now())) {
                     authorizationList.add(authorization);
                 }
             } catch (NullPointerException e){
