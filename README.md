@@ -26,15 +26,15 @@ All functions are executed separately, so you can integrate them seamlessly in y
 
 ## System requirements
 
-Java Runtime Environment (JRE) 8 or higher
+Java Runtime Environment (JRE) 8 or higher.
 
 ## Installation
 
-No installation needed. The application is packed into a single executable JAR file, just download or compile it and you're ready to go.
+No installation needed. The application is packed into a single executable JAR file, just [download](../../releases/) or [compile](../../wiki/How-to-compile-PJAC-from-source) it and you're ready to go.
 
 ## Usage
 
-See the [wiki](../../wiki/) for information on how to use the application.
+See [the wiki](../../wiki/) for information on how to use the application.
 
 
 -----
