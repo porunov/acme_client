@@ -56,6 +56,7 @@ public class RevokeCertificateCommand extends CertificateCommand {
             JsonElement failedCertificatesJsonElement = getGson().toJsonTree(failedCertificates,
                     new TypeToken<List<String>>() {}.getType());
             result.add("failed_certificates", failedCertificatesJsonElement);
+            error=true;
         }
 
     }

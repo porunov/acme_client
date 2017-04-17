@@ -34,6 +34,7 @@ public class AuthorizeDomainsCommand extends AuthorizationCommand {
                 AuthorizationManager authorizationManagement = new AuthorizationManager(
                         registrationManagement.getRegistration(), domain);
                 authorizationList.add(authorizationManagement.getAuthorization());
+                LOG.info("Authorization created: "+authorizationManagement.getAuthorization().getLocation());
                 writeChallengeByAuthorization(authorizationManagement);
             } catch (Exception ex) {
                 LOG.error("Cannot authorize domain: " + domain + "\n" +
@@ -54,6 +55,7 @@ public class AuthorizeDomainsCommand extends AuthorizationCommand {
             JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<List<String>>() {
             }.getType());
             result.add("failed_domains", failedDomainsJsonElement);
+            error=true;
         }
     }
 }

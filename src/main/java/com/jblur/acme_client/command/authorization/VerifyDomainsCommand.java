@@ -57,6 +57,8 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
 
         error = error || !writeAuthorizationList(authorizationList);
 
+        failedDomains.removeAll(verifiedDomains);
+
         if (failedDomains.size() > 0) {
             JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<HashSet<String>>() {
             }.getType());

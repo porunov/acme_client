@@ -51,9 +51,7 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        for(String failedDomain:failedDomains)
-            if(succeedDomains.contains(failedDomain))
-                failedDomains.remove(failedDomain);
+        failedDomains.removeAll(succeedDomains);
         
         if (failedDomains.size() > 0) {
             JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains,

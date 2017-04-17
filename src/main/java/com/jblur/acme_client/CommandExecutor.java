@@ -1,5 +1,7 @@
 package com.jblur.acme_client;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.jblur.acme_client.command.ACMECommand;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
 import com.jblur.acme_client.command.authorization.AuthorizeDomainsCommand;
@@ -12,6 +14,8 @@ import com.jblur.acme_client.command.certificate.RenewCertificateCommand;
 import com.jblur.acme_client.command.certificate.RevokeCertificateCommand;
 import com.jblur.acme_client.command.registration.*;
 import com.jblur.acme_client.manager.RegistrationManager;
+import org.shredzone.acme4j.Status;
+import org.shredzone.acme4j.exception.AcmeProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +24,15 @@ public class CommandExecutor {
     private static final Logger LOG = LoggerFactory.getLogger(CommandExecutor.class);
 
     private Parameters parameters;
+
+    public static final String RESULT_ERROR;
+
+    static {
+        Gson gson = new Gson();
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.add("status", gson.toJsonTree("error"));
+        RESULT_ERROR = gson.toJson(jsonObject);
+    }
 
     private String result;
 
@@ -59,6 +72,8 @@ public class CommandExecutor {
                 LOG.warn("Cannot create Registration. Cannot update agreement.");
             }
         } catch (AccountKeyNotFoundException e) {
+            LOG.warn("Account key not found. Cannot update agreement.", e);
+        } catch (Exception e){
             LOG.warn("Cannot update agreement.", e);
         }
     }
@@ -80,20 +95,16 @@ public class CommandExecutor {
             case Parameters.COMMAND_RENEW_CERTIFICATE:
                 registrationManager = getRegistrationManager();
                 if (registrationManager == null) {
-                    System.out.println(result);
+                    System.out.println(RESULT_ERROR);
+                    LOG.error("Cannot get registration.");
                     return;
                 }
         }
 
         if (parameters.isWithAgreementUpdate()) {
             //Strange. After the registration LE return not workable info. You need get registration one more time.
-            if(parameters.getCommand().equals(Parameters.COMMAND_REGISTER)){
-                registrationManager = getRegistrationManager();
-                if (registrationManager == null) {
-                    System.out.println(result);
-                    return;
-                }
-            }
+            registrationManager = (parameters.getCommand().equals(Parameters.COMMAND_REGISTER))?
+                    null:registrationManager;
             automaticallyUpdateAgreement(registrationManager);
         }
 
@@ -142,10 +153,10 @@ public class CommandExecutor {
             }
         } catch (AccountKeyNotFoundException e) {
             LOG.error("Key not found exception", e);
+            result=RESULT_ERROR;
         }
 
         System.out.println(result);
-
     }
 
 }
