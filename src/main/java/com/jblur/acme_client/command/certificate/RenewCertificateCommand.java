@@ -1,5 +1,7 @@
 package com.jblur.acme_client.command.certificate;
 
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import com.jblur.acme_client.IOManager;
 import com.jblur.acme_client.Parameters;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
@@ -61,13 +63,18 @@ public class RenewCertificateCommand extends CertificateCommand {
             } catch (AcmeException e) {
                 LOG.error("Cannot get certificate. Check if your domains of the certificate are verified", e);
                 error = true;
+                renew = false;
             } catch (IOException e) {
                 LOG.error("Cannot read csr: " + getParameters().getCsr(), e);
                 error = true;
+                renew = false;
             }
         }
 
         error = error || !writeCertificateList(certificatesList);
+
+        JsonElement renewedJsonElement = getGson().toJsonTree(renew, new TypeToken<Boolean>() {}.getType());
+        result.add("renewed", renewedJsonElement);
 
     }
 }
