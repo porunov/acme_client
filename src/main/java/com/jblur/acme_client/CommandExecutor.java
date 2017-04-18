@@ -14,8 +14,6 @@ import com.jblur.acme_client.command.certificate.RenewCertificateCommand;
 import com.jblur.acme_client.command.certificate.RevokeCertificateCommand;
 import com.jblur.acme_client.command.registration.*;
 import com.jblur.acme_client.manager.RegistrationManager;
-import org.shredzone.acme4j.Status;
-import org.shredzone.acme4j.exception.AcmeProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

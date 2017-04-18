@@ -11,7 +11,6 @@ import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -21,20 +20,20 @@ import java.security.cert.CertificateEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class CertificateCommand extends ACMECommand {
+abstract class CertificateCommand extends ACMECommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(CertificateCommand.class);
 
     private static Type listOfCertificateLocationObject = new TypeToken<List<String>>(){}.getType();
 
-    public final String CERTIFICATE_FILE_PATH;
+    final String CERTIFICATE_FILE_PATH;
 
-    public CertificateCommand(Parameters parameters) throws AccountKeyNotFoundException {
+    CertificateCommand(Parameters parameters) throws AccountKeyNotFoundException {
         super(parameters);
         CERTIFICATE_FILE_PATH = Paths.get(getParameters().getWorkDir(), Parameters.CERTIFICATE_URI_LIST).toString();
     }
 
-    public boolean writeCertificate(CertificateManager certificateManagement, String suffix) {
+    boolean writeCertificate(CertificateManager certificateManagement, String suffix) {
         boolean error = false;
         try {
             IOManager.writeX509Certificate(certificateManagement.downloadCertificate(),
@@ -57,7 +56,7 @@ public abstract class CertificateCommand extends ACMECommand {
     }
 
 
-    public boolean writeCertificateList(List<Certificate> certificateList) {
+    boolean writeCertificateList(List<Certificate> certificateList) {
         try {
             List<String> certificateLocationList = new LinkedList<>();
             for(Certificate certificate : certificateList){
@@ -73,7 +72,7 @@ public abstract class CertificateCommand extends ACMECommand {
         return true;
     }
 
-    public List<Certificate> getNotExpiredCertificates() {
+    List<Certificate> getNotExpiredCertificates() {
         List<Certificate> oldCertificateList = new LinkedList<>();
 
         if (!IOManager.isFileExists(CERTIFICATE_FILE_PATH)) {

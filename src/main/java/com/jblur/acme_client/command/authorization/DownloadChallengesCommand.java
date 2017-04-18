@@ -8,10 +8,7 @@ import com.jblur.acme_client.manager.AuthorizationManager;
 import org.shredzone.acme4j.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Paths;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 public class DownloadChallengesCommand extends AuthorizationCommand {

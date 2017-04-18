@@ -4,7 +4,6 @@ import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Comparator;
 
 public class CertificateExpireComparator implements Comparator<Certificate> {

@@ -7,7 +7,6 @@ import com.jblur.acme_client.Parameters;
 import org.shredzone.acme4j.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.security.KeyPair;
 

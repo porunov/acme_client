@@ -8,8 +8,6 @@ import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 

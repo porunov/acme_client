@@ -9,7 +9,6 @@ import com.jblur.acme_client.manager.RegistrationManager;
 import org.shredzone.acme4j.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.LinkedList;
 import java.util.List;
 

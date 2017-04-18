@@ -7,13 +7,10 @@ import com.jblur.acme_client.command.ACMECommand;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
 import com.jblur.acme_client.manager.AuthorizationManager;
 import org.shredzone.acme4j.Authorization;
-import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
-import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -23,20 +20,20 @@ import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class AuthorizationCommand extends ACMECommand {
+abstract class AuthorizationCommand extends ACMECommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthorizationCommand.class);
 
     private static Type listOfAuthorizationLocationsObject = new TypeToken<List<String>>(){}.getType();
 
-    public final String AUTHORIZATION_FILE_PATH;
+    final String AUTHORIZATION_FILE_PATH;
 
-    public AuthorizationCommand(Parameters parameters) throws AccountKeyNotFoundException {
+    AuthorizationCommand(Parameters parameters) throws AccountKeyNotFoundException {
         super(parameters);
         AUTHORIZATION_FILE_PATH = Paths.get(getParameters().getWorkDir(), Parameters.AUTHORIZATION_URI_LIST).toString();
     }
 
-    public List<Authorization> getNotExpiredAuthorizations() {
+    List<Authorization> getNotExpiredAuthorizations() {
         List<Authorization> oldAuthorizationList = new LinkedList<>();
 
         if (!IOManager.isFileExists(AUTHORIZATION_FILE_PATH)) {
@@ -83,7 +80,7 @@ public abstract class AuthorizationCommand extends ACMECommand {
     }
 
 
-    public boolean writeAuthorizationList(List<Authorization> authorizationList) {
+    boolean writeAuthorizationList(List<Authorization> authorizationList) {
         try {
             List<String> authorizationLocationList = new LinkedList<>();
 
@@ -101,7 +98,7 @@ public abstract class AuthorizationCommand extends ACMECommand {
         return true;
     }
 
-    public void writeChallengeByAuthorization(AuthorizationManager authorizationManagement) throws Exception {
+    void writeChallengeByAuthorization(AuthorizationManager authorizationManagement) throws Exception {
         switch (getChallengeType()) {
             case Http01Challenge.TYPE:
                 Http01Challenge http01Challenge = authorizationManagement.getHttp01Challenge();
@@ -127,7 +124,7 @@ public abstract class AuthorizationCommand extends ACMECommand {
         }
     }
 
-    public String getChallengeType() {
+    String getChallengeType() {
         String challengeType = null;
         if (getParameters().getChallengeType().equalsIgnoreCase(Parameters.CHALLENGE_HTTP01)) {
             challengeType = Http01Challenge.TYPE;
