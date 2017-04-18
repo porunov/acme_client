@@ -7,6 +7,7 @@ import com.jblur.acme_client.command.ACMECommand;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
 import com.jblur.acme_client.manager.AuthorizationManager;
 import org.shredzone.acme4j.Authorization;
+import org.shredzone.acme4j.Status;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.slf4j.Logger;
@@ -102,6 +103,9 @@ abstract class AuthorizationCommand extends ACMECommand {
         switch (getChallengeType()) {
             case Http01Challenge.TYPE:
                 Http01Challenge http01Challenge = authorizationManagement.getHttp01Challenge();
+                if(http01Challenge.getStatus()== Status.INVALID){
+                    throw new ChallengeInvalidException(http01Challenge.getLocation().toString());
+                }
                 String path;
                 if (getParameters().isOneDirForWellKnown()) {
                     path = Paths.get(getParameters().getWellKnownDir(), http01Challenge.getToken()).toString();
@@ -115,6 +119,9 @@ abstract class AuthorizationCommand extends ACMECommand {
                 break;
             case Dns01Challenge.TYPE:
                 Dns01Challenge dns01Challenge = authorizationManagement.getDns01Challenge();
+                if(dns01Challenge.getStatus()== Status.INVALID){
+                    throw new ChallengeInvalidException(dns01Challenge.getLocation().toString());
+                }
                 IOManager.writeString(
                         Paths.get(getParameters().getDnsDigestDir(),
                                 authorizationManagement.getAuthorization().getDomain() + "_dns_digest").toString(),

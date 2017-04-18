@@ -38,7 +38,7 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
                     if (!succeedDomains.contains(authorization.getDomain()))
                         succeedDomains.add(authorization.getDomain());
                 } catch (Exception e) {
-                    LOG.error("Cannot get challenges for authorization: " + authorization.getLocation()
+                    LOG.warn("Cannot get challenge for authorization: " + authorization.getLocation()
                             + "\nDomain: " + authorization.getDomain(), e);
                     if (!failedDomains.contains(authorization.getDomain()))
                         failedDomains.add(authorization.getDomain());
@@ -53,7 +53,7 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
         if (failedDomains.size() > 0) {
             JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains,
                     new TypeToken<HashSet<String>>() {}.getType());
-            result.add("failed_domains_to_download_authorizations", failedDomainsJsonElement);
+            result.add("failed_domains", failedDomainsJsonElement);
             error=true;
         }
     }

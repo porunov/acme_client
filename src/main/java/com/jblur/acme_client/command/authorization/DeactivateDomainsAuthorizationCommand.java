@@ -29,7 +29,7 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
             return;
         }
 
-        List<String> failedDomains = new LinkedList<>();
+        List<String> failedAuthorizations = new LinkedList<>();
 
         List<Authorization> authorizationList = new LinkedList<>();
 
@@ -38,8 +38,8 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
                 try {
                     authorization.deactivate();
                 } catch (AcmeException e) {
-                    LOG.error("Cannot deactivate authorization", e);
-                    failedDomains.add(authorization.getDomain());
+                    LOG.error("Cannot deactivate authorization: "+authorization.getLocation().toString(), e);
+                    failedAuthorizations.add(authorization.getLocation().toString());
                     error = true;
                 }
             } else {
@@ -49,10 +49,10 @@ public class DeactivateDomainsAuthorizationCommand extends AuthorizationCommand 
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        if (failedDomains.size() > 0) {
-            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<List<String>>() {
+        if (failedAuthorizations.size() > 0) {
+            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedAuthorizations, new TypeToken<List<String>>() {
             }.getType());
-            result.add("failed_domains", failedDomainsJsonElement);
+            result.add("failed_authorizations", failedDomainsJsonElement);
             error=true;
         }
     }
