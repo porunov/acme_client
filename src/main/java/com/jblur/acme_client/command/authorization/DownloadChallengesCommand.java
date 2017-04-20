@@ -20,9 +20,6 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
 
     @Override
     public void commandExecution() {
-        HashSet<String> succeedDomains = new HashSet<>();
-        HashSet<String> failedDomains = new HashSet<>();
-
         List<Authorization> authorizationList = getNotExpiredAuthorizations();
         if (authorizationList == null) {
             LOG.error("Cannot read file: " +
@@ -31,27 +28,34 @@ public class DownloadChallengesCommand extends AuthorizationCommand {
             return;
         }
 
+        HashSet<String> domains = getDomains(authorizationList);
+        HashSet<String> authorizedDomains = new HashSet<>();
+
         for (Authorization authorization : authorizationList) {
-            if (getParameters().getDomains() == null || getParameters().getDomains().contains(authorization.getDomain())) {
+            authorizedDomains.add(authorization.getDomain());
+            if (domains.contains(authorization.getDomain())) {
                 try {
                     writeChallengeByAuthorization(new AuthorizationManager(authorization));
-                    if (!succeedDomains.contains(authorization.getDomain()))
-                        succeedDomains.add(authorization.getDomain());
+                    domains.remove(authorization.getDomain());
                 } catch (Exception e) {
                     LOG.warn("Cannot get challenge for authorization: " + authorization.getLocation()
                             + "\nDomain: " + authorization.getDomain(), e);
-                    if (!failedDomains.contains(authorization.getDomain()))
-                        failedDomains.add(authorization.getDomain());
                 }
+            }
+        }
+
+        for(String domain : domains){
+            if(!authorizedDomains.contains(domain)){
+                LOG.error("Domain " + domain + " is not authorized. Please, authorize it first.");
+            }else {
+                LOG.error("Domain " + domain + " is not verified. Please, check warnings.");
             }
         }
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        failedDomains.removeAll(succeedDomains);
-        
-        if (failedDomains.size() > 0) {
-            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains,
+        if (domains.size() > 0) {
+            JsonElement failedDomainsJsonElement = getGson().toJsonTree(domains,
                     new TypeToken<HashSet<String>>() {}.getType());
             result.add("failed_domains", failedDomainsJsonElement);
             error=true;

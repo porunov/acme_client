@@ -18,6 +18,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -129,6 +130,19 @@ abstract class AuthorizationCommand extends ACMECommand {
                 );
                 break;
         }
+    }
+
+    HashSet<String> getDomains(List<Authorization> authorizationList){
+        HashSet<String> domains;
+        if(getParameters().getDomains() == null){
+            domains = new HashSet<>();
+            for (Authorization authorization : authorizationList) {
+                domains.add(authorization.getDomain());
+            }
+        }else {
+            domains = new HashSet<>(getParameters().getDomains());
+        }
+        return domains;
     }
 
     String getChallengeType() {

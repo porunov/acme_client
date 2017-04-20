@@ -22,9 +22,6 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
 
     @Override
     public void commandExecution() {
-        HashSet<String> verifiedDomains = new HashSet<>();
-        HashSet<String> failedDomains = new HashSet<>();
-
         List<Authorization> authorizationList = getNotExpiredAuthorizations();
         if (authorizationList == null) {
             LOG.error("Cannot read file: " +
@@ -33,30 +30,35 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
             return;
         }
 
+        HashSet<String> domains = getDomains(authorizationList);
+        HashSet<String> authorizedDomains = new HashSet<>();
+
         for (Authorization authorization : authorizationList) {
-            if (getParameters().getDomains() == null || getParameters().getDomains().contains(authorization.getDomain())) {
+            authorizedDomains.add(authorization.getDomain());
+            if (domains.contains(authorization.getDomain())) {
                 try {
                     new ChallengeManager(authorization, getChallengeType()).validateChallenge(60000);
-                    if (!verifiedDomains.contains(authorization.getDomain()))
-                        verifiedDomains.add(authorization.getDomain());
+                    domains.remove(authorization.getDomain());
                 } catch (TimeoutException ex) {
                     LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified. Time out exception", ex);
-                    if (!failedDomains.contains(authorization.getDomain()))
-                        failedDomains.add(authorization.getDomain());
                 } catch (AcmeException ex) {
                     LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified.", ex);
-                    if (!failedDomains.contains(authorization.getDomain()))
-                        failedDomains.add(authorization.getDomain());
                 }
+            }
+        }
+
+        for(String domain : domains){
+            if(!authorizedDomains.contains(domain)){
+                LOG.error("Domain " + domain + " is not authorized. Please, authorize it first.");
+            }else {
+                LOG.error("Domain " + domain + " is not verified. Please, check warnings.");
             }
         }
 
         error = error || !writeAuthorizationList(authorizationList);
 
-        failedDomains.removeAll(verifiedDomains);
-
-        if (failedDomains.size() > 0) {
-            JsonElement failedDomainsJsonElement = getGson().toJsonTree(failedDomains, new TypeToken<HashSet<String>>() {
+        if (domains.size() > 0) {
+            JsonElement failedDomainsJsonElement = getGson().toJsonTree(domains, new TypeToken<HashSet<String>>() {
             }.getType());
             result.add("failed_domains", failedDomainsJsonElement);
             error=true;
