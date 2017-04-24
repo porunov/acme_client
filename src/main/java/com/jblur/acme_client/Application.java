@@ -30,7 +30,7 @@ public class Application {
             JoranConfigurator configurator = new JoranConfigurator();
             configurator.setContext(context);
             context.reset();
-            if(!logDir.endsWith(File.separator))
+            if (!logDir.endsWith(File.separator))
                 logDir+= File.separator;
             context.putProperty("LOG_DIR", logDir);
             context.putProperty("LOG_LEVEL", logLevel);
@@ -38,7 +38,7 @@ public class Application {
             InputStream is = classloader.getResourceAsStream(logbackConf);
             configurator.doConfigure(is);
         } catch (JoranException je) {
-            LOG.warn("Can not configure logger. Continue to execute the command.", je);
+            LOG.warn("Cannot configure logger. Continue to execute the command.", je);
         }
         StatusPrinter.printInCaseOfErrorsOrWarnings(context);
     }
@@ -58,15 +58,15 @@ public class Application {
     public static void main(String[] args) throws URISyntaxException, IOException {
         Parameters parameters = new Parameters();
         JCommander jCommander;
-        try{
+        try {
             jCommander = new JCommander(parameters, args);
-        }catch (Exception e){
-            LOG.error("An error occurred during parameters parsing.", e);
+        } catch (Exception e) {
+            LOG.error("An error occurred while parsing parameters.", e);
             System.out.print(CommandExecutor.RESULT_ERROR);
             return;
         }
 
-        jCommander.setProgramName("java -jar acme_client.jar --command <command>");
+        jCommander.setProgramName("java -jar acme_client.jar");
 
         if (parameters.isHelp()) {
             StringBuilder usage = new StringBuilder();
@@ -77,30 +77,30 @@ public class Application {
             return;
         }
 
-        if(parameters.isVersion()) {
+        if (parameters.isVersion()) {
             Properties prop = new Properties();
             try {
                 prop.load(classloader.getResourceAsStream(APPLICATION_PROPS));
                 System.out.println(prop.getProperty("version"));
             }
             catch (IOException ex) {
-                LOG.error("Cannot get version of the acme client.", ex);
+                LOG.error("Cannot get version information.", ex);
                 System.out.println(CommandExecutor.RESULT_ERROR);
             }
             return;
         }
 
         if (!Files.isDirectory(Paths.get(parameters.getLogDir()))) {
-            LOG.info("Your log dir isn't exists: " + parameters.getLogDir() +
-                    "\nTrying to create the directory for log files");
+            LOG.info("Specified log directory doesn't exist: " + parameters.getLogDir() +
+                    "\nTrying to create the log directory.");
             try {
                 Files.createDirectories(Paths.get(parameters.getLogDir()));
             } catch (IOException e) {
-                LOG.error("Cannot create log dir: " + parameters.getLogDir() + "\n . Please check permissions", e);
+                LOG.error("Cannot create log directory: " + parameters.getLogDir() + ".\nPlease check filesystem permissions.", e);
                 System.out.print(CommandExecutor.RESULT_ERROR);
                 return;
             }
-            LOG.info("Log directory " + parameters.getLogDir() + " is successfully created");
+            LOG.info("Created log directory: " + parameters.getLogDir());
         }
 
 

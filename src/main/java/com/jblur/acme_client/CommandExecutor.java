@@ -48,7 +48,7 @@ public class CommandExecutor {
                 LOG.error("Cannot get account information.");
             }
         } catch (AccountKeyNotFoundException e) {
-            LOG.error("Key not found exception", e);
+            LOG.error("Account key not found.", e);
         }
         return registrationManager;
     }
@@ -67,7 +67,7 @@ public class CommandExecutor {
             if (registrationManager != null) {
                 new UpdateAgreementCommand(parameters, registrationManager).execute();
             } else {
-                LOG.warn("Cannot create Registration. Cannot update agreement.");
+                LOG.warn("Cannot create registration. Cannot update agreement.");
             }
         } catch (AccountKeyNotFoundException e) {
             LOG.warn("Account key not found. Cannot update agreement.", e);
@@ -80,7 +80,7 @@ public class CommandExecutor {
 
         RegistrationManager registrationManager = null;
 
-        LOG.info("Start execute a command '" + parameters.getCommand() + "'");
+        LOG.info("Start execute command '" + parameters.getCommand() + "'");
 
         switch (parameters.getCommand()) {
             case Parameters.COMMAND_REGISTER:
@@ -100,7 +100,7 @@ public class CommandExecutor {
         }
 
         if (parameters.isWithAgreementUpdate()) {
-            //Strange. After the registration LE return not workable info. You need get registration one more time.
+            //Strange. After the registration CA returns unworkable info. We need to get registration one more time.
             registrationManager = (parameters.getCommand().equals(Parameters.COMMAND_REGISTER))?
                     null:registrationManager;
             automaticallyUpdateAgreement(registrationManager);
@@ -147,10 +147,10 @@ public class CommandExecutor {
                     result = executeACMECommand(new RenewCertificateCommand(parameters, registrationManager));
                     break;
                 default:
-                    LOG.error("You must choose one of the commands you want to execute (--help)");
+                    LOG.error("No command specified. You must specify a command to execute, use --help for a list of available commands.");
             }
         } catch (AccountKeyNotFoundException e) {
-            LOG.error("Key not found exception", e);
+            LOG.error("Account key not found.", e);
             result=RESULT_ERROR;
         }
 
