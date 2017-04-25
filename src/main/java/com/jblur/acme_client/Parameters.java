@@ -62,9 +62,8 @@ public class Parameters {
     private static String formatParameter(String p, boolean required) {
         int length = COLUMN_SIZE;
         StringBuilder fp = new StringBuilder();
-        String pn = (required)?"Required ":"Optional ";
         fp.append(generateIndentString(INDENT_NUM));
-        fp.append(pn);
+        fp.append((required)?"Required ":"Optional ");
         fp.append((p.contains(","))?"parameters: ":"parameter : ");
         int fplenght = fp.length();
         fp.append(p);
