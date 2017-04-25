@@ -29,25 +29,21 @@ public class Parameters {
     public final static String CHALLENGE_DNS01 = "DNS01";
     public final static StringBuilder MAIN_USAGE = new StringBuilder();
     private static final Logger LOG = LoggerFactory.getLogger(Parameters.class);
-    private static int columnSize = 80;
-    private static int indentNum = 6;
+    private final static int COLUMN_SIZE = 80;
+    private final static int INDENT_NUM = 6;
     
     /**
     * Generate indent string.
     */
-    private static String s(int count) {
-        StringBuilder result = new StringBuilder();
-        for (int i = 0; i < count; i++) {
-            result.append(" ");
-        }
-        return result.toString();
+    private static String generateIndentString(int length) {
+        return new String(new char[length]).replace('\0', ' ');
     }
 
     /**
-    * Wrap a potentially long line to {columnSize}.
+    * Wrap a potentially long line to {COLUMN_SIZE}.
     */
     private static String wrapString(String s) {
-        int length = columnSize;
+        int length = COLUMN_SIZE;
         StringBuilder sb = new StringBuilder(s);
         int i = 0;
         while (i + length < sb.length() && (i = sb.lastIndexOf(" ", i + length)) != -1) {
@@ -64,24 +60,17 @@ public class Parameters {
     *        Boolean: true for required parameters, false for optional parameters.
     */
     private static String formatParameter(String p, boolean required) {
-        int length = columnSize;
+        int length = COLUMN_SIZE;
         StringBuilder fp = new StringBuilder();
-        String pn = "Optional ";
-        if (required == true) {
-            pn = "Required ";
-        }
-        fp.append(s(indentNum)+pn);
-        int c;
-        if ((c = p.indexOf(",")) == -1) {
-            fp.append("parameter : ");
-        } else {
-            fp.append("parameters: ");
-        }
+        String pn = (required)?"Required ":"Optional ";
+        fp.append(generateIndentString(INDENT_NUM));
+        fp.append(pn);
+        fp.append((p.contains(","))?"parameters: ":"parameter : ");
         int fplenght = fp.length();
         fp.append(p);
         int i = 0;
         while (i + length < fp.length() && (i = fp.lastIndexOf(" ", i + length)) != -1) {
-            fp.replace(i, i + 1, "\n"+s(fplenght));
+            fp.replace(i, i + 1, "\n"+generateIndentString(fplenght));
         }
         fp.append("\n");
         return fp.toString();
@@ -124,17 +113,17 @@ public class Parameters {
         MAIN_USAGE.append("\n* "+COMMAND_DEACTIVATE_DOMAIN_AUTHORIZATION+"\n"+wrapString("Deactivate all domain "
                 + "authorizations for all or specific domains. Useful if you want to remove/sell one or more "
                 + "domains.")+formatParameter("--account-key",true)+formatParameter("--domain, --work-dir",false)
-                + s(indentNum)+"Needs work-dir file: authorization_uri_list\n");
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: authorization_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_DOWNLOAD_CERTIFICATES+"\n"+wrapString("Download previously generated "
                 + "certificates. By default, all existing certificates are downloaded, sorted ascending by "
                 + "expiration date (cert_0.pem being the most recent certificate). Use newest-only to download "
                 + "only the most recent certificate.")+formatParameter("--account-key",true)
                 + formatParameter("--cert-dir, --newest-only, --work-dir",false)
-                + s(indentNum)+"Needs work-dir file: certificate_uri_list\n");
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: certificate_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_DOWNLOAD_CHALLENGES+"\n"+wrapString("Download challenges for previously "
                 + "generated authorizations.")+formatParameter("--account-key",true)
                 + formatParameter("--challenge-type, --dns-digests-dir, --domain, --one-dir-for-well-known, "
-                + "--well-known-dir, --work-dir",false)+s(indentNum)+"Needs work-dir file: authorization_uri_list\n");
+                + "--well-known-dir, --work-dir",false)+generateIndentString(INDENT_NUM)+"Needs work-dir file: authorization_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_GENERATE_CERTIFICATE+"\n"+wrapString("Generate a new certificate and "
                 + "download it.")+formatParameter("--account-key, --csr",true)+formatParameter("--cert-dir, "
                 + "--work-dir",false));
@@ -153,7 +142,7 @@ public class Parameters {
                 + "either all your certificates or by time criteria. All certificates will be removed which are "
                 + "generated after <from-time> and which will be expired by <to-time>.")
                 + formatParameter("--account-key",true)+formatParameter("--from-time, --to-time, --work-dir",false)
-                + s(indentNum)+"Needs work-dir file: certificate_uri_list\n");
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: certificate_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_UPDATE_AGREEMENT+"\n"+wrapString("Accept the Subscriber Agreement. If the "
                 + "parameter agreement-url is omitted you will automatically accept the most recent agreement.")
                 + formatParameter("--account-key",true)+formatParameter("--agreement-url",false));
@@ -163,7 +152,7 @@ public class Parameters {
                 + "that already have a valid authorization (authorize-domains returned previously created and "
                 + "already verified challenges), challenge files won't be checked.")
                 + formatParameter("--account-key",true)+formatParameter("--domain, --work-dir",false)
-                + s(indentNum)+"Needs work-dir file: authorization_uri_list\n");
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: authorization_uri_list\n");
         MAIN_USAGE.append("\nExamples:\n");
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command register -a /etc/pjac/account.key "
                 + "--with-agreement-update --email admin@example.com"));
