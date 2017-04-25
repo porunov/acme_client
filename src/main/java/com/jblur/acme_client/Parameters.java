@@ -174,7 +174,7 @@ public class Parameters {
     @Parameter(names = {"--version", "-v"}, help = true, description = "Show version information.")
     private boolean version;
 
-    @Parameter(names = "--newest-only", help = true, description = "Download only the most recent certificate. " +
+    @Parameter(names = "--newest-only", description = "Download only the most recent certificate. " +
             "When omitted, all certificates are downloaded.")
     private boolean newestOnly;
 
