@@ -58,6 +58,8 @@ abstract class AuthorizationCommand extends ACMECommand {
                 oldAuthorizationList.add(Authorization.bind(getSession(), new URI(authorizationLocation)));
             } catch (URISyntaxException e) {
                 LOG.warn("URI isn't correct: "+authorizationLocation, e);
+            } catch (Exception e){
+                LOG.warn("Cannot retrieve authorization: "+authorizationLocation, e);
             }
         }
 
@@ -137,7 +139,11 @@ abstract class AuthorizationCommand extends ACMECommand {
         if(getParameters().getDomains() == null){
             domains = new HashSet<>();
             for (Authorization authorization : authorizationList) {
-                domains.add(authorization.getDomain());
+                try {
+                    domains.add(authorization.getDomain());
+                }catch (Exception e){
+                    LOG.warn("Cannot retrieve domain from authorization: "+authorization.getLocation(), e);
+                }
             }
         }else {
             domains = new HashSet<>(getParameters().getDomains());

@@ -34,16 +34,20 @@ public class VerifyDomainsCommand extends AuthorizationCommand {
         HashSet<String> authorizedDomains = new HashSet<>();
 
         for (Authorization authorization : authorizationList) {
-            authorizedDomains.add(authorization.getDomain());
-            if (domains.contains(authorization.getDomain())) {
-                try {
-                    new ChallengeManager(authorization, getChallengeType()).validateChallenge(60000);
-                    domains.remove(authorization.getDomain());
-                } catch (TimeoutException ex) {
-                    LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified. Time out exception", ex);
-                } catch (AcmeException ex) {
-                    LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified.", ex);
+            try {
+                authorizedDomains.add(authorization.getDomain());
+                if (domains.contains(authorization.getDomain())) {
+                    try {
+                        new ChallengeManager(authorization, getChallengeType()).validateChallenge(60000);
+                        domains.remove(authorization.getDomain());
+                    } catch (TimeoutException ex) {
+                        LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified. Time out exception", ex);
+                    } catch (AcmeException ex) {
+                        LOG.warn("Authorization " + authorization.getLocation() + " haven't been verified.", ex);
+                    }
                 }
+            }catch (Exception e){
+                LOG.warn("Cannot retrieve domain from authorization: "+authorization.getLocation(), e);
             }
         }
 

@@ -94,6 +94,8 @@ abstract class CertificateCommand extends ACMECommand {
                 oldCertificateList.add(Certificate.bind(getSession(), new URI(certificateLocation)));
             } catch (URISyntaxException e) {
                 LOG.warn("URI isn't correct: "+certificateLocation, e);
+            } catch (Exception e){
+                LOG.warn("Cannot retrieve certificate: "+certificateLocation, e);
             }
         }
 
