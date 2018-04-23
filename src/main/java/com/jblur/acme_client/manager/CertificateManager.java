@@ -7,7 +7,7 @@ import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.URI;
+import java.net.URL;
 import java.security.cert.X509Certificate;
 
 public class CertificateManager {
@@ -22,8 +22,8 @@ public class CertificateManager {
     }
 
     //For existing certificate
-    public CertificateManager(Session session, URI certificateLocationUri) {
-        this.certificate = Certificate.bind(session, certificateLocationUri);
+    public CertificateManager(Session session, URL certificateLocationUrl) {
+        this.certificate = Certificate.bind(session, certificateLocationUrl);
     }
 
     public CertificateManager(Certificate certificate) {

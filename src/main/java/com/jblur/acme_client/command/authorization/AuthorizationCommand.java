@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.HashSet;
@@ -55,9 +55,9 @@ abstract class AuthorizationCommand extends ACMECommand {
 
         for(String authorizationLocation : authorizationLocationList){
             try {
-                oldAuthorizationList.add(Authorization.bind(getSession(), new URI(authorizationLocation)));
-            } catch (URISyntaxException e) {
-                LOG.warn("URI isn't correct: "+authorizationLocation, e);
+                oldAuthorizationList.add(Authorization.bind(getSession(), new URL(authorizationLocation)));
+            } catch (MalformedURLException e) {
+                LOG.warn("URL isn't correct: "+authorizationLocation, e);
             } catch (Exception e){
                 LOG.warn("Cannot retrieve authorization: "+authorizationLocation, e);
             }

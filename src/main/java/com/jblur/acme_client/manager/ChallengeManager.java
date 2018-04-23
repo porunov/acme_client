@@ -7,7 +7,7 @@ import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.URI;
+import java.net.URL;
 import java.util.concurrent.TimeoutException;
 
 public class ChallengeManager {
@@ -46,8 +46,8 @@ public class ChallengeManager {
         }
     }
 
-    public ChallengeManager(Session session, URI challengeURI) throws AcmeException {
-        this.challenge = Challenge.bind(session, challengeURI);
+    public ChallengeManager(Session session, URL challengeURL) throws AcmeException {
+        this.challenge = Challenge.bind(session, challengeURL);
     }
 
     public Challenge getChallenge() {

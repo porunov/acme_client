@@ -6,15 +6,14 @@ import com.jblur.acme_client.Parameters;
 import com.jblur.acme_client.command.ACMECommand;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
 import com.jblur.acme_client.manager.CertificateManager;
-import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.security.cert.CertificateEncodingException;
 import java.util.LinkedList;
@@ -91,9 +90,9 @@ abstract class CertificateCommand extends ACMECommand {
 
         for(String certificateLocation : certificateLocationList){
             try {
-                oldCertificateList.add(Certificate.bind(getSession(), new URI(certificateLocation)));
-            } catch (URISyntaxException e) {
-                LOG.warn("URI isn't correct: "+certificateLocation, e);
+                oldCertificateList.add(Certificate.bind(getSession(), new URL(certificateLocation)));
+            } catch (MalformedURLException e) {
+                LOG.warn("URL isn't correct: "+certificateLocation, e);
             } catch (Exception e){
                 LOG.warn("Cannot retrieve certificate: "+certificateLocation, e);
             }

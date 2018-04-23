@@ -9,7 +9,7 @@ import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 
 public class AuthorizationManager {
@@ -22,8 +22,8 @@ public class AuthorizationManager {
         this.authorization = registration.authorizeDomain(domainName);
     }
 
-    public AuthorizationManager(Session session, URI authUri) {
-        this.authorization = Authorization.bind(session, authUri);
+    public AuthorizationManager(Session session, URL authUrl) {
+        this.authorization = Authorization.bind(session, authUrl);
     }
 
     public AuthorizationManager(Authorization authorization) {

@@ -9,6 +9,7 @@ import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URI;
+import java.net.URL;
 import java.security.KeyPair;
 
 public class RegistrationManager {
@@ -48,9 +49,9 @@ public class RegistrationManager {
         }
     }
 
-    public RegistrationManager(Session session, URI accountLocationUri) {
+    public RegistrationManager(Session session, URL accountLocationUrl) {
         this.session = session;
-        this.registration = Registration.bind(session, accountLocationUri);
+        this.registration = Registration.bind(session, accountLocationUrl);
     }
 
     public Registration getRegistration() {
