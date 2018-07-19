@@ -7,8 +7,10 @@ import com.jblur.acme_client.Parameters;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
 import com.jblur.acme_client.manager.CertificateManager;
 import org.shredzone.acme4j.Certificate;
+import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
@@ -16,7 +18,7 @@ import java.util.TreeSet;
 public class DownloadCertificatesCommand extends CertificateCommand {
     private static final Logger LOG = LoggerFactory.getLogger(DownloadCertificatesCommand.class);
 
-    public DownloadCertificatesCommand(Parameters parameters) throws AccountKeyNotFoundException {
+    public DownloadCertificatesCommand(Parameters parameters) throws AccountKeyNotFoundException, AcmeException {
         super(parameters);
     }
 
@@ -41,16 +43,18 @@ public class DownloadCertificatesCommand extends CertificateCommand {
             CertificateManager certificateManagement = new CertificateManager(certificateSet.first());
             writeCertificateError = !writeCertificate(certificateManagement, "");
             error = error || writeCertificateError;
-            if(writeCertificateError)
+            if(writeCertificateError) {
                 failedCertificates.add(certificateManagement.getCertificate().getLocation().toString());
+            }
         } else {
             int i = 0;
             for (Certificate certificate : certificateSet) {
                 CertificateManager certificateManagement = new CertificateManager(certificate);
                 writeCertificateError = !writeCertificate(certificateManagement, "_" + i);
                 error = error || writeCertificateError;
-                if(writeCertificateError)
+                if(writeCertificateError) {
                     failedCertificates.add(certificateManagement.getCertificate().getLocation().toString());
+                }
                 i++;
             }
         }

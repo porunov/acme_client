@@ -8,13 +8,14 @@ import org.shredzone.acme4j.Certificate;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.LinkedList;
 import java.util.List;
 
 public class RevokeCertificateCommand extends CertificateCommand {
     private static final Logger LOG = LoggerFactory.getLogger(RevokeCertificateCommand.class);
 
-    public RevokeCertificateCommand(Parameters parameters) throws AccountKeyNotFoundException {
+    public RevokeCertificateCommand(Parameters parameters) throws AccountKeyNotFoundException, AcmeException {
         super(parameters);
     }
 
@@ -33,8 +34,8 @@ public class RevokeCertificateCommand extends CertificateCommand {
 
         for (Certificate certificate : certificatesList) {
             try {
-                if (certificate.download().getNotBefore().getTime() > getParameters().getFromTime() &&
-                        certificate.download().getNotAfter().getTime() < getParameters().getToTime()) {
+                if (certificate.getCertificate().getNotBefore().getTime() > getParameters().getFromTime() &&
+                        certificate.getCertificate().getNotAfter().getTime() < getParameters().getToTime()) {
                     try {
                         certificate.revoke();
                     } catch (Exception e) {
@@ -42,10 +43,10 @@ public class RevokeCertificateCommand extends CertificateCommand {
                         failedCertificates.add(certificate.getLocation().toString());
                         error = true;
                     }
-                } else if (certificate.download().getNotAfter().getTime() > System.currentTimeMillis()) {
+                } else if (certificate.getCertificate().getNotAfter().getTime() > System.currentTimeMillis()) {
                     newCertificatesList.add(certificate);
                 }
-            } catch (AcmeException e) {
+            } catch (Exception e) {
                 LOG.error("Cannot check certificate: " + certificate.getLocation(), e);
             }
         }

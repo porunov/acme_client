@@ -6,24 +6,23 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Set;
 
 public class Parameters {
 
     public final static String COMMAND_REGISTER = "register";
     public final static String COMMAND_GET_AGREEMENT_URL = "get-agreement-url";
-    public final static String COMMAND_UPDATE_AGREEMENT = "update-agreement";
     public final static String COMMAND_ADD_EMAIL = "add-email";
     public final static String COMMAND_DEACTIVATE_ACCOUNT = "deactivate-account";
-    public final static String COMMAND_AUTHORIZE_DOMAINS = "authorize-domains";
+    public final static String COMMAND_ORDER_CERTIFICATE = "order-certificate";
     public final static String COMMAND_DEACTIVATE_DOMAIN_AUTHORIZATION = "deactivate-domain-authorization";
     public final static String COMMAND_DOWNLOAD_CHALLENGES = "download-challenges";
     public final static String COMMAND_VERIFY_DOMAINS = "verify-domains";
     public final static String COMMAND_GENERATE_CERTIFICATE = "generate-certificate";
     public final static String COMMAND_DOWNLOAD_CERTIFICATES = "download-certificates";
     public final static String COMMAND_REVOKE_CERTIFICATE = "revoke-certificate";
-    public final static String COMMAND_RENEW_CERTIFICATE = "renew-certificate";
-    public final static String AUTHORIZATION_URI_LIST = "authorization_uri_list";
+
+    public final static String ORDER_URI_LIST = "order_uri_list";
     public final static String CERTIFICATE_URI_LIST = "certificate_uri_list";
     public final static String CHALLENGE_HTTP01 = "HTTP01";
     public final static String CHALLENGE_DNS01 = "DNS01";
@@ -75,8 +74,8 @@ public class Parameters {
         return fp.toString();
     }    
 
-    /**
-    * Additional usage information to print to STD_OUT with command line parameter '--help'.
+    /*
+     Additional usage information to print to STD_OUT with command line parameter '--help'.
     */
     static {
         MAIN_USAGE.append("---Running the application---\n\n");
@@ -85,86 +84,84 @@ public class Parameters {
         MAIN_USAGE.append(wrapString("With commands, additional required parameters need to be specified. "
                 + "Most commands also support optional parameters. The following optional parameters "
                 + "can be used with all commands:"));
-        MAIN_USAGE.append(wrapString("--log-dir, --log-level, --server-url, --with-agreement-update, "
-                + "--agreement-url"));
+        MAIN_USAGE.append(wrapString("--log-dir, --log-level, --server-url, --with-agreement-update"));
         MAIN_USAGE.append("\nSyntax: java -jar acme_client <--command value <--option value <...>>\n"
                 + "          [--option value [...]] | --help | --version>\n\n");
         MAIN_USAGE.append(wrapString("The application returns a JSON object which contains either "
                 + "\"status\":\"ok\" or \"status\":\"error\", where sometimes additional information is provided. "
                 + "Detailed information about operations and errors is written to the log file."));
         MAIN_USAGE.append("\nWARNING:\nBy default acme_client uses Let's Encrypt's production server:\n"
-                + "https://acme-v01.api.letsencrypt.org/directory"
+                + "https://acme-v02.api.letsencrypt.org/directory"
                 + "\nIf you want to test the client, use a test server to avoid hitting rate limits:\n"
-                + "--server-url https://acme-staging.api.letsencrypt.org/directory\n");
+                + "--server-url https://acme-staging-v02.api.letsencrypt.org/directory\n");
         MAIN_USAGE.append("\nCommands:\n");
-        MAIN_USAGE.append("\n* "+COMMAND_ADD_EMAIL+"\n"+wrapString("Add an e-mail address to your account or "
-                + "change the existing e-mail address on your account.")+formatParameter("--account-key, "
+        MAIN_USAGE.append("\n* "+COMMAND_ADD_EMAIL+"\n"+wrapString("Add an e-mail address to your account "
+                + "if it isn't already added to your account.")+formatParameter("--account-key, "
                 + "--email",true));
-        MAIN_USAGE.append("\n* "+COMMAND_AUTHORIZE_DOMAINS+"\n"+wrapString("Request authorization for the "
-                + "specified domains, i.e. request generation of challenges and download them. Challenges will "
-                + "only be created for domains that aren't authorized yet. For domains that already have a valid "
-                + "authorization, new authorizations won't be generated but instead previously created (and "
-                + "already verified) challenges will be returned.")+formatParameter("--account-key, --domain",true)
-                + formatParameter("--challenge-type, --dns-digests-dir, --one-dir-for-well-known, "
-                + "--well-known-dir, --work-dir",false));
         MAIN_USAGE.append("\n* "+COMMAND_DEACTIVATE_ACCOUNT+"\n"+wrapString("Deactivate the account associated "
                 + "with the specified user account key.")+formatParameter("--account-key",true));
         MAIN_USAGE.append("\n* "+COMMAND_DEACTIVATE_DOMAIN_AUTHORIZATION+"\n"+wrapString("Deactivate all domain "
                 + "authorizations for all or specific domains. Useful if you want to remove/sell one or more "
-                + "domains.")+formatParameter("--account-key",true)+formatParameter("--domain, --work-dir",false)
-                + generateIndentString(INDENT_NUM)+"Needs work-dir file: authorization_uri_list\n");
+                + "domains.")
+                + formatParameter("--account-key",true)
+                + formatParameter("--domain or --csr, --work-dir",false)
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: order_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_DOWNLOAD_CERTIFICATES+"\n"+wrapString("Download previously generated "
                 + "certificates. By default, all existing certificates are downloaded, sorted ascending by "
                 + "expiration date (cert_0.pem being the most recent certificate). Use newest-only to download "
-                + "only the most recent certificate.")+formatParameter("--account-key",true)
+                + "only the most recent certificate.")
+                + formatParameter("--account-key",true)
                 + formatParameter("--cert-dir, --newest-only, --work-dir",false)
                 + generateIndentString(INDENT_NUM)+"Needs work-dir file: certificate_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_DOWNLOAD_CHALLENGES+"\n"+wrapString("Download challenges for previously "
-                + "generated authorizations.")+formatParameter("--account-key",true)
-                + formatParameter("--challenge-type, --dns-digests-dir, --domain, --one-dir-for-well-known, "
-                + "--well-known-dir, --work-dir",false)+generateIndentString(INDENT_NUM)+"Needs work-dir file: authorization_uri_list\n");
+                + "generated authorizations.")
+                + formatParameter("--account-key",true)
+                + formatParameter("--challenge-type, --dns-digests-dir, --domain or --csr, " +
+                "--one-dir-for-well-known, --well-known-dir, --work-dir",false)
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: order_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_GENERATE_CERTIFICATE+"\n"+wrapString("Generate a new certificate and "
-                + "download it.")+formatParameter("--account-key, --csr",true)+formatParameter("--cert-dir, "
-                + "--work-dir",false));
+                + "download it.")
+                + formatParameter("--account-key, --csr",true)
+                + formatParameter("--cert-dir, --work-dir",false)
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: order_uri_list\n");
         MAIN_USAGE.append("\n* "+COMMAND_GET_AGREEMENT_URL+"\n"+wrapString("Returns the URL to the most recent "
                 + "Subscriber Agreement. The URL is written to the JSON return value, before the status object, i.e "
-                + "{\"agreement_url\":\"https://...\",\"status\":\"ok\"}.")+formatParameter("--account-key",true));
+                + "{\"agreement_url\":\"https://...\",\"status\":\"ok\"}."));
+        MAIN_USAGE.append("\n* "+ COMMAND_ORDER_CERTIFICATE +"\n"+wrapString("Orders a certificate for the "
+                + "specified domains, i.e. request generation of challenges and download them.")
+                + formatParameter("--account-key, --csr",true)
+                + formatParameter("--challenge-type, --dns-digests-dir, --one-dir-for-well-known, "
+                + "--well-known-dir, --work-dir",false));
         MAIN_USAGE.append("\n* "+COMMAND_REGISTER+"\n"+wrapString("Create a new account with your CA which will "
-                + "be associated with the specified user account key.")+formatParameter("--account-key",true)
+                + "be associated with the specified user account key. This command doesn't create a new account if " +
+                "the account is already exists with the specified account key.")
+                + formatParameter("--account-key",true)
                 + formatParameter("--email",false));
-        MAIN_USAGE.append("\n* "+COMMAND_RENEW_CERTIFICATE+"\n"+wrapString("Generate a new certificate and download "
-                + "it, either for an existing CSR or a new CSR. Only generates a new certificate if your most recent "
-                + "certificate will expire within <max-expiration-time>, specified in milliseconds. By default it is "
-                + "set to 2592000000 (30 days).")+formatParameter("--account-key, --csr",true)
-                + formatParameter("--cert-dir, --force, --max-expiration-time, --work-dir.",false));
         MAIN_USAGE.append("\n* "+COMMAND_REVOKE_CERTIFICATE+"\n"+wrapString("Revoke certificates. You can revoke "
                 + "either all your certificates or by time criteria. All certificates will be removed which are "
                 + "generated after <from-time> and which will be expired by <to-time>.")
-                + formatParameter("--account-key",true)+formatParameter("--from-time, --to-time, --work-dir",false)
+                + formatParameter("--account-key",true)
+                + formatParameter("--from-time, --to-time, --work-dir",false)
                 + generateIndentString(INDENT_NUM)+"Needs work-dir file: certificate_uri_list\n");
-        MAIN_USAGE.append("\n* "+COMMAND_UPDATE_AGREEMENT+"\n"+wrapString("Accept the Subscriber Agreement. If the "
-                + "parameter agreement-url is omitted you will automatically accept the most recent agreement.")
-                + formatParameter("--account-key",true)+formatParameter("--agreement-url",false));
         MAIN_USAGE.append("\n* "+COMMAND_VERIFY_DOMAINS+"\n"+wrapString("Validate pending authorizations for "
                 + "specified domains, i.e. verify challenges for pending authorizations. Only challenges for domains "
                 + "that aren't authorized yet are verified (retrieved from your webserver by the CA). For domains "
                 + "that already have a valid authorization (authorize-domains returned previously created and "
                 + "already verified challenges), challenge files won't be checked.")
-                + formatParameter("--account-key",true)+formatParameter("--domain, --work-dir",false)
-                + generateIndentString(INDENT_NUM)+"Needs work-dir file: authorization_uri_list\n");
+                + formatParameter("--account-key",true)
+                + formatParameter("--challenge-type, --domain or --csr, --work-dir",false)
+                + generateIndentString(INDENT_NUM)+"Needs work-dir file: order_uri_list\n");
         MAIN_USAGE.append("\nExamples:\n");
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command register -a /etc/pjac/account.key "
                 + "--with-agreement-update --email admin@example.com"));
-        MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command authorize-domains -a "
-                + "/etc/pjac/account.key -w /etc/pjac/workdir/ -d example.com -d www.example.com -d "
-                + "admin.example.com -d www.admin.example.com --well-known-dir /var/www/.well-known/acme-challenge "
-                + "--one-dir-for-well-known"));
+        MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command order-certificate -a "
+                + "/etc/pjac/account.key -w /etc/pjac/workdir/ --csr /etc/pjac/example.com.csr " +
+                "--well-known-dir /var/www/.well-known/acme-challenge --one-dir-for-well-known"));
+        MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command verify-domains -a "
+                + "/etc/pjac/account.key -w /etc/pjac/workdir/ --csr /etc/pjac/example.com.csr"));
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command generate-certificate -a "
                 + "/etc/pjac/account.key -w /etc/pjac/workdir/ --csr /etc/pjac/example.com.csr --cert-dir "
                 + "/etc/pjac/certdir/"));
-        MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command renew-certificate -a "
-                + "/etc/pjac/account.key -w /etc/pjac/workdir/ --cert-dir /etc/pjac/certdir/ --csr "
-                + "/etc/pjac/example.com.csr --max-expiration-time 1728000000"));
         MAIN_USAGE.append("\n");
     }
 
@@ -178,10 +175,10 @@ public class Parameters {
             "When omitted, all certificates are downloaded.")
     private boolean newestOnly;
 
-    @Parameter(names = {"--work-dir", "-w"}, description = "Directory to save information about authorizations " +
-            "(authorization_uri_list) and about generated certificates (certificate_uri_list) to, for use with " +
-            "later operations. These files contain no sensitive information. If authorization_uri_list is lost " +
-            "you need to perform [authorization](./Command-reference#authorize-domains) again and if " +
+    @Parameter(names = {"--work-dir", "-w"}, description = "Directory to save information about certificate orders " +
+            "(order_uri_list) and about generated certificates (certificate_uri_list) to, for use with " +
+            "later operations. These files contain no sensitive information. If order_uri_list is lost " +
+            "you need to perform [certificate order](./Command-reference#order-certificate) again and if " +
             "certificate_uri_list is lost PJAC cannot download certificates or check expiration times of previously " +
             "generated certificates.")
     private String workDir = "/var/acme_work_dir/";
@@ -195,7 +192,7 @@ public class Parameters {
 
     @Parameter(names = {"--domain", "-d"}, description = "Domain name. Can be used multiple times, up to CA's limit " +
             "(Let's Encrypt CA, for instance, has a limit of 100 domains for one certificate).")
-    private List<String> domains;
+    private Set<String> domains;
 
     @Parameter(names = {"--cert-dir"}, description = "The directory where downloaded certificates will be saved to.")
     private String certDir = this.workDir + "cert/";
@@ -217,22 +214,13 @@ public class Parameters {
             "receive notifications from the CA.")
     private String email;
 
-    //acme://letsencrypt.org/staging  - TEST
-    //https://acme-staging.api.letsencrypt.org/directory -- TEST
-    //https://acme-v01.api.letsencrypt.org/directory -- PRODUCTION
+    //acme://letsencrypt.org -- PRODUCTION
+    //acme://letsencrypt.org/staging -- TEST
+    //https://acme-staging-v02.api.letsencrypt.org/directory -- TEST
+    //https://acme-v02.api.letsencrypt.org/directory -- PRODUCTION
     @Parameter(names = {"--server-url", "-u"}, description = "ACME Server URL. Can be specified to use a different CA " +
             "server, e.g. a staging server (test server). This option can be used with all commands.")
-    private String acmeServerUrl = "https://acme-v01.api.letsencrypt.org/directory";
-
-    @Parameter(names = {"--agreement-url"}, description = "The URL to a Subscriber Agreement. The URL to the most " +
-            "recent Subscriber Agreement can be retrieved by running the command get-agreement-url. This option can " +
-            "be used with all commands.")
-    private String agreementUrl;
-
-    @Parameter(names = {"--max-expiration-time"}, description = "Expiration time in milliseconds to use with the " +
-            "command renew-certificate. A certificate will be renewed only if your most recent existing certificate " +
-            "will expire within <max-expiration-time>. By default max-expiration-time is set to 30 days.")
-    private long maxExpirationTime = 2592000000L;
+    private String acmeServerUrl = "https://acme-v02.api.letsencrypt.org/directory";
 
     @Parameter(names = {"--log-level"}, description = "Level of detail for logging. Possible values: " +
             "'OFF' - no logging; " +
@@ -242,9 +230,6 @@ public class Parameters {
             "'DEBUG' - errors, warnings, information and debug information; " +
             "'TRACE' - errors, warnings, information, debug information and operations tracing.")
     private String logLevel = "WARN";
-
-    @Parameter(names = {"--force"}, description = "Force renewal without checking expiration time.")
-    private boolean force;
 
     @Parameter(names = {"--one-dir-for-well-known"}, description = "By default challenge files will be saved " +
             "in separate directories on a per-domain basis. Use this option to save all downloaded challenge " +
@@ -337,14 +322,10 @@ public class Parameters {
         return checkString(email, "You have to provide email address");
     }
 
-    private boolean checkAgreementUrl() {
-        return checkString(agreementUrl, "You have to provide agreement url address");
-    }
-
-    private boolean checkAuthorizationUriList() {
-        return checkFile(Paths.get(workDir, AUTHORIZATION_URI_LIST).toString(),
-                "Your authorization uri list file doesn't exists. Seems that it is either wrong working directory or " +
-                        "you haven't authorized your domains yet: " + Paths.get(workDir, AUTHORIZATION_URI_LIST).toString());
+    private boolean checkOrderUriList() {
+        return checkFile(Paths.get(workDir, ORDER_URI_LIST).toString(),
+                "Your order uri list file doesn't exists. Seems that it is either wrong working directory or " +
+                        "you haven't requested any certificates yet: " + Paths.get(workDir, ORDER_URI_LIST).toString());
     }
 
     private boolean checkCertificateUriList() {
@@ -371,10 +352,7 @@ public class Parameters {
                 correct = checkAccountKey();
                 break;
             case Parameters.COMMAND_GET_AGREEMENT_URL:
-                correct = checkAccountKey();
-                break;
-            case Parameters.COMMAND_UPDATE_AGREEMENT:
-                correct = checkAccountKey();
+                correct = true;
                 break;
             case Parameters.COMMAND_ADD_EMAIL:
                 correct = checkAccountKey() && checkEmail();
@@ -382,29 +360,26 @@ public class Parameters {
             case Parameters.COMMAND_DEACTIVATE_ACCOUNT:
                 correct = checkAccountKey();
                 break;
-            case Parameters.COMMAND_AUTHORIZE_DOMAINS:
-                correct = checkAccountKey() && checkDomains() && checkChallengeType() && checkWorkDir();
+            case Parameters.COMMAND_ORDER_CERTIFICATE:
+                correct = checkAccountKey() && checkCsr() && checkChallengeType() && checkWorkDir();
                 break;
             case Parameters.COMMAND_DEACTIVATE_DOMAIN_AUTHORIZATION:
-                correct = checkAccountKey() && checkAuthorizationUriList();
+                correct = checkAccountKey() && checkOrderUriList();
                 break;
             case Parameters.COMMAND_DOWNLOAD_CHALLENGES:
-                correct = checkAccountKey() && checkAuthorizationUriList();
+                correct = checkAccountKey() && checkOrderUriList();
                 break;
             case Parameters.COMMAND_VERIFY_DOMAINS:
-                correct = checkAccountKey() && checkAuthorizationUriList();
+                correct = checkAccountKey() && checkOrderUriList();
                 break;
             case Parameters.COMMAND_GENERATE_CERTIFICATE:
-                correct = checkAccountKey() && checkCsr() && checkWorkDir() && checkCertDir();
+                correct = checkAccountKey() && checkCsr() && checkWorkDir() && checkCertDir() && checkOrderUriList();
                 break;
             case Parameters.COMMAND_DOWNLOAD_CERTIFICATES:
                 correct = checkAccountKey() && checkCertificateUriList();
                 break;
             case Parameters.COMMAND_REVOKE_CERTIFICATE:
                 correct = checkAccountKey() && checkCertificateUriList();
-                break;
-            case Parameters.COMMAND_RENEW_CERTIFICATE:
-                correct = checkAccountKey() && checkCsr() && checkWorkDir() && checkCertDir();
                 break;
             default:
                 LOG.error("Command '" + command + "' not recognized. Use --help for a list of available commands");
@@ -434,7 +409,7 @@ public class Parameters {
         return csr;
     }
 
-    public List<String> getDomains() {
+    public Set<String> getDomains() {
         return domains;
     }
 
@@ -462,20 +437,8 @@ public class Parameters {
         return acmeServerUrl;
     }
 
-    public String getAgreementUrl() {
-        return agreementUrl;
-    }
-
-    public long getMaxExpirationTime() {
-        return maxExpirationTime;
-    }
-
     public String getCommand() {
         return command;
-    }
-
-    public boolean isForce() {
-        return force;
     }
 
     public boolean isOneDirForWellKnown() {

@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Properties;
@@ -23,6 +22,48 @@ public class Application {
     private static final String APPLICATION_PROPS = "application.properties";
 
     private static ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
+    public static void main(String[] args) {
+        Parameters parameters = new Parameters();
+
+        JCommander jCommander = JCommander.newBuilder()
+                .addObject(parameters)
+                .build();
+
+        try {
+            jCommander.parse(args);
+        } catch (Exception e) {
+            LOG.error("An error occurred while parsing parameters.", e);
+            System.out.print(CommandExecutor.RESULT_ERROR);
+            return;
+        }
+
+        jCommander.setProgramName("java -jar acme_client.jar");
+
+        if (parameters.isHelp()) {
+            printHelpInfo(jCommander);
+            return;
+        }
+
+        if (parameters.isVersion()) {
+            printVersion();
+            return;
+        }
+
+        setupLogDirectory(parameters);
+
+        configureLogger(parameters.getLogDir(),
+                (checkLogLevel(parameters.getLogLevel())) ? parameters.getLogLevel() : "WARN",
+                LOGBACK_CONF);
+
+
+        if (!parameters.verifyRequirements()) {
+            System.out.print(CommandExecutor.RESULT_ERROR);
+            return;
+        }
+
+        new CommandExecutor(parameters).execute();
+    }
 
     private static void configureLogger(String logDir, String logLevel, String logbackConf) {
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
@@ -55,41 +96,27 @@ public class Application {
         return valid;
     }
 
-    public static void main(String[] args) throws URISyntaxException, IOException {
-        Parameters parameters = new Parameters();
-        JCommander jCommander;
+    private static void printHelpInfo(JCommander jCommander){
+        StringBuilder usage = new StringBuilder();
+        jCommander.usage(usage);
+        System.out.println(usage.toString());
+        String format = "%10s%n";
+        System.out.format(format, Parameters.MAIN_USAGE.toString());
+    }
+
+    private static void printVersion(){
+        Properties prop = new Properties();
         try {
-            jCommander = new JCommander(parameters, args);
-        } catch (Exception e) {
-            LOG.error("An error occurred while parsing parameters.", e);
-            System.out.print(CommandExecutor.RESULT_ERROR);
-            return;
+            prop.load(classloader.getResourceAsStream(APPLICATION_PROPS));
+            System.out.println(prop.getProperty("version"));
         }
-
-        jCommander.setProgramName("java -jar acme_client.jar");
-
-        if (parameters.isHelp()) {
-            StringBuilder usage = new StringBuilder();
-            jCommander.usage(usage);
-            System.out.println(usage.toString());
-            String format = "%10s%n";
-            System.out.format(format, Parameters.MAIN_USAGE.toString());
-            return;
+        catch (IOException ex) {
+            LOG.error("Cannot get version information.", ex);
+            System.out.println(CommandExecutor.RESULT_ERROR);
         }
+    }
 
-        if (parameters.isVersion()) {
-            Properties prop = new Properties();
-            try {
-                prop.load(classloader.getResourceAsStream(APPLICATION_PROPS));
-                System.out.println(prop.getProperty("version"));
-            }
-            catch (IOException ex) {
-                LOG.error("Cannot get version information.", ex);
-                System.out.println(CommandExecutor.RESULT_ERROR);
-            }
-            return;
-        }
-
+    private static void setupLogDirectory(Parameters parameters){
         if (!Files.isDirectory(Paths.get(parameters.getLogDir()))) {
             LOG.info("Specified log directory doesn't exist: " + parameters.getLogDir() +
                     "\nTrying to create the log directory.");
@@ -102,19 +129,6 @@ public class Application {
             }
             LOG.info("Created log directory: " + parameters.getLogDir());
         }
-
-
-        configureLogger(parameters.getLogDir(),
-                (checkLogLevel(parameters.getLogLevel())) ? parameters.getLogLevel() : "WARN",
-                LOGBACK_CONF);
-
-
-        if (!parameters.verifyRequirements()) {
-            System.out.print(CommandExecutor.RESULT_ERROR);
-            return;
-        }
-
-        new CommandExecutor(parameters).execute();
     }
 
 }

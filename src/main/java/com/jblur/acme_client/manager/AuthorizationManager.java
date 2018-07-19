@@ -1,11 +1,10 @@
 package com.jblur.acme_client.manager;
 
-import org.shredzone.acme4j.Authorization;
-import org.shredzone.acme4j.Registration;
-import org.shredzone.acme4j.Session;
+import org.shredzone.acme4j.*;
 import org.shredzone.acme4j.challenge.Challenge;
 import org.shredzone.acme4j.challenge.Dns01Challenge;
 import org.shredzone.acme4j.challenge.Http01Challenge;
+import org.shredzone.acme4j.challenge.TlsAlpn01Challenge;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +17,12 @@ public class AuthorizationManager {
 
     private Authorization authorization;
 
-    public AuthorizationManager(Registration registration, String domainName) throws AcmeException {
-        this.authorization = registration.authorizeDomain(domainName);
+    public AuthorizationManager(Account account, String domain) throws AcmeException {
+        this.authorization = account.preAuthorizeDomain(domain);
     }
 
-    public AuthorizationManager(Session session, URL authUrl) {
-        this.authorization = Authorization.bind(session, authUrl);
+    public AuthorizationManager(Login login, URL authUrl) {
+        this.authorization = login.bindAuthorization(authUrl);
     }
 
     public AuthorizationManager(Authorization authorization) {
@@ -34,8 +33,8 @@ public class AuthorizationManager {
         return this.authorization;
     }
 
-    public Collection<Challenge> getHttp01OrDns01Challenges() {
-        return this.authorization.findCombination(Http01Challenge.TYPE, Dns01Challenge.TYPE);
+    public Collection<Challenge> getChallenges(){
+        return authorization.getChallenges();
     }
 
     /**
@@ -65,8 +64,46 @@ public class AuthorizationManager {
         return this.authorization.findChallenge(Dns01Challenge.TYPE);
     }
 
-    public void deactivate() throws AcmeException {
-        this.authorization.deactivate();
+    public TlsAlpn01Challenge getTlsAlpn01Challenge(){
+        return this.authorization.findChallenge(TlsAlpn01Challenge.TYPE);
+    }
+
+    public boolean authorizeDomain() throws AcmeException{
+        return ValidationService.validate(new ResourceWithStatusWrapper() {
+            @Override
+            public Status getStatus() {
+                return authorization.getStatus();
+            }
+
+            @Override
+            public void trigger() throws AcmeException {
+            }
+
+            @Override
+            public void update() throws AcmeException {
+                authorization.update();
+            }
+
+            @Override
+            public String getLocation() {
+                return authorization.getLocation().toString();
+            }
+
+            @Override
+            public void failIfInvalid() throws AcmeException {
+                if(isAuthorizationUnusable()){
+                    throw new AcmeException("Authorization: "+authorization.getLocation().toString()+" cannot be used " +
+                            "anymore");
+                }
+            }
+
+            private boolean isAuthorizationUnusable(){
+                return authorization.getStatus() == Status.INVALID ||
+                        authorization.getStatus() == Status.EXPIRED ||
+                        authorization.getStatus() == Status.DEACTIVATED ||
+                        authorization.getStatus() == Status.REVOKED;
+            }
+        });
     }
 
 }
