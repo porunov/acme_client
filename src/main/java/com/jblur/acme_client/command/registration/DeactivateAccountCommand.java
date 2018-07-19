@@ -2,8 +2,7 @@ package com.jblur.acme_client.command.registration;
 
 import com.jblur.acme_client.Parameters;
 import com.jblur.acme_client.command.ACMECommand;
-import com.jblur.acme_client.command.AccountKeyNotFoundException;
-import com.jblur.acme_client.manager.RegistrationManager;
+import com.jblur.acme_client.manager.AccountManager;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,10 +10,9 @@ import org.slf4j.LoggerFactory;
 public class DeactivateAccountCommand extends ACMECommand {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeactivateAccountCommand.class);
-    private RegistrationManager registrationManagement;
+    private AccountManager registrationManagement;
 
-    public DeactivateAccountCommand(Parameters parameters, RegistrationManager registrationManagement)
-            throws AccountKeyNotFoundException {
+    public DeactivateAccountCommand(Parameters parameters, AccountManager registrationManagement){
         super(parameters);
         this.registrationManagement = registrationManagement;
     }

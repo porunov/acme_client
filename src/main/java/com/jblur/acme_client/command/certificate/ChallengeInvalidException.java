@@ -1,4 +1,4 @@
-package com.jblur.acme_client.command.authorization;
+package com.jblur.acme_client.command.certificate;
 
 public class ChallengeInvalidException extends Exception {
     public ChallengeInvalidException() {

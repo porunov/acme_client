@@ -1,13 +1,14 @@
 package com.jblur.acme_client.manager;
 
 import org.shredzone.acme4j.Certificate;
-import org.shredzone.acme4j.Registration;
+import org.shredzone.acme4j.Login;
 import org.shredzone.acme4j.RevocationReason;
 import org.shredzone.acme4j.Session;
 import org.shredzone.acme4j.exception.AcmeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URL;
+import java.security.KeyPair;
 import java.security.cert.X509Certificate;
 
 public class CertificateManager {
@@ -16,43 +17,27 @@ public class CertificateManager {
 
     private Certificate certificate;
 
-    //For new certificates and for renewal
-    public CertificateManager(byte[] csr, Registration registration) throws AcmeException {
-        this.certificate = registration.requestCertificate(csr);
-    }
-
-    //For existing certificate
-    public CertificateManager(Session session, URL certificateLocationUrl) {
-        this.certificate = Certificate.bind(session, certificateLocationUrl);
-    }
-
     public CertificateManager(Certificate certificate) {
         this.certificate = certificate;
     }
 
-    public CertificateManager(Certificate certificate, Session session) {
-        this.certificate = certificate;
-        try {
-            certificate.rebind(session);
-        } catch (Exception ex) {
-            LOG.warn("Can not rebind certificate: " + certificate.getLocation() + " to session: " +
-                    session.getServerUri().toString(), ex);
-        }
+    public CertificateManager(Login login, URL certificateURL) {
+        this.certificate = login.bindCertificate(certificateURL);
     }
 
     public Certificate getCertificate() {
         return this.certificate;
     }
 
-    public X509Certificate downloadCertificate() throws AcmeException {
-        return this.certificate.download();
+    public X509Certificate downloadCertificate() {
+        return this.certificate.getCertificate();
     }
 
-    public X509Certificate[] downloadCertificateChain() throws AcmeException {
-        return this.certificate.downloadChain();
+    public X509Certificate[] downloadCertificateChain() {
+        return this.certificate.getCertificateChain().toArray(new X509Certificate[]{});
     }
 
-    public X509Certificate[] downloadFullChainCertificate() throws AcmeException {
+    public X509Certificate[] downloadFullChainCertificate() {
         X509Certificate cert = downloadCertificate();
         X509Certificate[] chain = downloadCertificateChain();
         X509Certificate[] fullChain = new X509Certificate[chain.length + 1];
@@ -70,7 +55,7 @@ public class CertificateManager {
     }
 
     public boolean revokeCertificate(int leftSeconds) throws AcmeException {
-        if ((System.currentTimeMillis() + leftSeconds) >= this.certificate.download().getNotAfter().getTime()) {
+        if ((System.currentTimeMillis() + leftSeconds) >= this.certificate.getCertificate().getNotAfter().getTime()) {
             this.certificate.revoke();
             return true;
         }
@@ -89,11 +74,16 @@ public class CertificateManager {
         this.certificate.revoke(revocationReason);
     }
 
-    public long getExpirationDate() throws AcmeException {
-        return certificate.download().getNotAfter().getTime();
+    public static void revokeCertificate(Session session, KeyPair domainKeyPair, X509Certificate cert, RevocationReason reason)
+            throws AcmeException {
+        Certificate.revoke(session, domainKeyPair, cert, reason);
     }
 
-    public long getExpirationDate(X509Certificate x509Certificate) throws AcmeException {
+    public long getExpirationDate() throws AcmeException {
+        return certificate.getCertificate().getNotAfter().getTime();
+    }
+
+    public long getExpirationDate(X509Certificate x509Certificate) {
         return x509Certificate.getNotAfter().getTime();
     }
 
