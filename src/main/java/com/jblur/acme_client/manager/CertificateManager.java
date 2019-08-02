@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
+import java.util.List;
 
 public class CertificateManager {
 
@@ -34,20 +36,26 @@ public class CertificateManager {
     }
 
     public X509Certificate[] downloadCertificateChain() {
-        return this.certificate.getCertificateChain().toArray(new X509Certificate[]{});
+
+        X509Certificate[] fullChain = downloadFullChainCertificate();
+
+        if(fullChain.length==0){
+            return fullChain;
+        }
+
+        if (fullChain.length==1){
+            return new X509Certificate[0];
+        }
+
+        X509Certificate[] chain = new X509Certificate[fullChain.length-1];
+
+        System.arraycopy(fullChain, 1, chain, 0, fullChain.length-1);
+
+        return chain;
     }
 
     public X509Certificate[] downloadFullChainCertificate() {
-        X509Certificate cert = downloadCertificate();
-        X509Certificate[] chain = downloadCertificateChain();
-        X509Certificate[] fullChain = new X509Certificate[chain.length + 1];
-        fullChain[0] = cert;
-        int i = 1;
-        for (X509Certificate x509Certificate : chain) {
-            fullChain[i] = x509Certificate;
-            i++;
-        }
-        return fullChain;
+        return this.certificate.getCertificateChain().toArray(new X509Certificate[]{});
     }
 
     public void revokeCertificate() throws AcmeException {

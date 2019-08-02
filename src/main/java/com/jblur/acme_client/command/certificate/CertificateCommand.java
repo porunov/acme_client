@@ -123,7 +123,7 @@ abstract class CertificateCommand extends AuthorizedCommand {
                 if (getParameters().isOneDirForWellKnown()) {
                     path = Paths.get(getParameters().getWellKnownDir(), http01Challenge.getToken()).toString();
                 } else {
-                    String subdir = authorizationManagement.getAuthorization().getDomain()+
+                    String subdir = authorizationManagement.getAuthorization().getIdentifier().getDomain()+
                             returnIfWildcard(authorizationManagement.getAuthorization());
                     path = Paths.get(getParameters().getWellKnownDir(), subdir).toString();
                     IOManager.createDirectories(path);
@@ -140,7 +140,7 @@ abstract class CertificateCommand extends AuthorizedCommand {
                 String fileSuffix = "_dns_digest"+returnIfWildcard(authorization);
                 IOManager.writeString(
                         Paths.get(getParameters().getDnsDigestDir(),
-                                authorizationManagement.getAuthorization().getDomain() + fileSuffix).toString(),
+                                authorizationManagement.getAuthorization().getIdentifier().getDomain() + fileSuffix).toString(),
                         dns01Challenge.getDigest()
                 );
                 break;
@@ -256,7 +256,7 @@ abstract class CertificateCommand extends AuthorizedCommand {
     }
 
     String getDomain(Authorization authorization){
-        String domain = authorization.getDomain();
+        String domain = authorization.getIdentifier().getDomain();
         if(authorization.isWildcard() && !domain.startsWith("*.")){
             domain = "*."+domain;
         }
