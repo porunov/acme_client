@@ -144,10 +144,14 @@ public class Application {
     }
 
     private static void printVersion(){
+        Package packet = Application.class.getPackage();
+        String implVersion = packet.getImplementationVersion();
+        
         Properties prop = new Properties();
         try {
             prop.load(classloader.getResourceAsStream(APPLICATION_PROPS));
-            System.out.println(prop.getProperty("version"));
+            String version = prop.getProperty("version");
+            System.out.println(String.format(version, implVersion != null ? implVersion : "?"));
         }
         catch (IOException ex) {
             LOG.error("Cannot get version information.", ex);
