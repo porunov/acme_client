@@ -261,6 +261,10 @@ public class Parameters {
             "available commands.")
     private String command;
 
+    @Parameter(names = {"--config-file", "-p"}, description = "Configuration properties file to load default " +
+            "parameters from.")
+    private String configFilename = "config.properties";
+
     private boolean checkFile(String path, String errMsg) {
         if (path==null || !new File(path).isFile()) {
             LOG.error(errMsg);
@@ -467,6 +471,10 @@ public class Parameters {
 
     public String getLogLevel() {
         return logLevel;
+    }
+
+    public String getConfigFilename() {
+        return configFilename;
     }
 
 }
