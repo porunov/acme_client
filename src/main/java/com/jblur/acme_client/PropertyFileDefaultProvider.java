@@ -11,7 +11,7 @@ import com.beust.jcommander.ParameterException;
 /**
  * A default provider that reads its default values from a property file on the file system.
  * 
- * @author darian
+ * @author Darian
  */
 public class PropertyFileDefaultProvider implements IDefaultProvider {
     private Properties properties;

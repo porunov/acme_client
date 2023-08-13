@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import com.jblur.acme_client.command.ACMECommand;
 import com.jblur.acme_client.command.AccountKeyNotFoundException;
 import com.jblur.acme_client.command.certificate.*;
+import com.jblur.acme_client.command.http.HttpGetCommand;
+import com.jblur.acme_client.command.http.HttpPostCommand;
 import com.jblur.acme_client.command.registration.*;
 import com.jblur.acme_client.manager.AccountManager;
 import org.shredzone.acme4j.exception.AcmeException;
@@ -53,7 +55,8 @@ public class CommandExecutor {
 
         try {
             switch (parameters.getCommand()) {
-                case Parameters.COMMAND_REGISTER: case Parameters.COMMAND_ADD_EMAIL:
+                case Parameters.COMMAND_REGISTER: 
+                case Parameters.COMMAND_ADD_EMAIL:
                     break;
                 case Parameters.COMMAND_GET_AGREEMENT_URL:
                     result = executeACMECommand(new GetAgreementURLCommand(parameters));
@@ -81,6 +84,12 @@ public class CommandExecutor {
                     break;
                 case Parameters.COMMAND_REVOKE_CERTIFICATE:
                     result = executeACMECommand(new RevokeCertificateCommand(parameters));
+                    break;
+                case Parameters.COMMAND_HTTP_GET:
+                    result = executeACMECommand(new HttpGetCommand(parameters));
+                    break;
+                case Parameters.COMMAND_HTTP_POST:
+                    result = executeACMECommand(new HttpPostCommand(parameters));
                     break;
                 default:
                     LOG.error("No command specified. You must specify a command to execute, use --help for a list of available commands.");

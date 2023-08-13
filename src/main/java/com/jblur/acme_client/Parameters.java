@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Parameters {
@@ -21,6 +24,8 @@ public class Parameters {
     public final static String COMMAND_GENERATE_CERTIFICATE = "generate-certificate";
     public final static String COMMAND_DOWNLOAD_CERTIFICATES = "download-certificates";
     public final static String COMMAND_REVOKE_CERTIFICATE = "revoke-certificate";
+    public final static String COMMAND_HTTP_GET = "http-get";
+    public final static String COMMAND_HTTP_POST = "http-post";
 
     public final static String ORDER_URI_LIST = "order_uri_list";
     public final static String CERTIFICATE_URI_LIST = "certificate_uri_list";
@@ -85,15 +90,18 @@ public class Parameters {
                 + "Most commands also support optional parameters. The following optional parameters "
                 + "can be used with all commands:"));
         MAIN_USAGE.append(wrapString("--log-dir, --log-level, --server-url, --with-agreement-update"));
+        
         MAIN_USAGE.append("\nSyntax: java -jar acme_client <--command value <--option value <...>>\n"
                 + "          [--option value [...]] | --help | --version>\n\n");
         MAIN_USAGE.append(wrapString("The application returns a JSON object which contains either "
                 + "\"status\":\"ok\" or \"status\":\"error\", where sometimes additional information is provided. "
                 + "Detailed information about operations and errors is written to the log file."));
+        
         MAIN_USAGE.append("\nWARNING:\nBy default acme_client uses Let's Encrypt's production server:\n"
                 + "https://acme-v02.api.letsencrypt.org/directory"
                 + "\nIf you want to test the client, use a test server to avoid hitting rate limits:\n"
                 + "--server-url https://acme-staging-v02.api.letsencrypt.org/directory\n");
+        
         MAIN_USAGE.append("\nCommands:\n");
         MAIN_USAGE.append("\n* "+COMMAND_ADD_EMAIL+"\n"+wrapString("Add an e-mail address to your account "
                 + "if it isn't already added to your account.")+formatParameter("--account-key, "
@@ -151,6 +159,23 @@ public class Parameters {
                 + formatParameter("--account-key",true)
                 + formatParameter("--challenge-type, --domain or --csr, --work-dir",false)
                 + generateIndentString(INDENT_NUM)+"Needs work-dir file: order_uri_list\n");
+        MAIN_USAGE.append("\n* " + COMMAND_HTTP_GET + "\n" + wrapString("A convenience command for executing"
+                + " a HTTP GET to an arbitrary dynamic DNS update service. This provides"
+                + " a mechanism to set the message digest on the DNS service for the ACME challenge. SAN certificates"
+                + " are supported, in which case multiple calls will be made to update each DNS record. The"
+                + " domain-tokens and domain-aliases parameters are a comma seperated list of name=value pairs.")
+                + formatParameter("--csr, --dns-digests-dir, --ddns-url, --domain-tokens", true)
+                + formatParameter("--ddns-host-key, --ddns-record-key, --ddns-token-key,"
+                + " --domain-aliases", false));
+        MAIN_USAGE.append("\n* " + COMMAND_HTTP_POST + "\n" + wrapString("A convenience command for executing"
+                + " a HTTP POST to an arbitrary dynamic DNS update service. This provides"
+                + " a mechanism to set the message digest on the DNS service for the ACME challenge. SAN certificates"
+                + " are supported, in which case multiple calls will be made to update each DNS record. The"
+                + " domain-tokens and domain-aliases parameters are a comma seperated list of name=value pairs.")
+                + formatParameter("--csr, --dns-digests-dir, --ddns-url --domain-tokens", true)
+                + formatParameter("--ddns-host-key, --ddns-record-key, --ddns-token-key,"
+                + " --domain-aliases", false));
+        
         MAIN_USAGE.append("\nExamples:\n");
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command register -a /etc/pjac/account.key "
                 + "--with-agreement-update --email admin@example.com"));
@@ -162,6 +187,12 @@ public class Parameters {
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command generate-certificate -a "
                 + "/etc/pjac/account.key -w /etc/pjac/workdir/ --csr /etc/pjac/example.com.csr --cert-dir "
                 + "/etc/pjac/certdir/"));
+        MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command http-get -csr "
+                + "/etc/pjac/example.com.csr --dns-digests-dir /etc/pjac/digests/ --ddns-url "
+                + "https://dyn.dns.he.net/nic/update --ddns-host-key hostname --ddns-record-key txt "
+                + "--ddns-token-key password --domain-aliases _acme-challenge.san-a.example.com=_my-cname.san-a.example.net, _acme-challenge.san-b.example.com=_my-cname.san-b.example.net "
+                + "--domain-tokens _my-cname.san-a.example.net=...OwOXZMK5IPtBN0..., _my-cname.san-b.example.net=...N8BCp2imcCXbbd..."
+                + ""));
         MAIN_USAGE.append("\n");
     }
 
@@ -261,9 +292,35 @@ public class Parameters {
             "available commands.")
     private String command;
 
-    @Parameter(names = {"--config-file", "-p"}, description = "Configuration properties file to load default " +
-            "parameters from.")
+    @Parameter(names = {"--config-file", "-p"}, description = "Configuration properties file to load " +
+            "default parameters from.")
     private String configFilename = "config.properties";
+
+    @Parameter(names = {"--ddns-url"}, description = "The URL of your dynamic DNS service for use with " +
+            "the http-get or http-post commands.")
+    private String dynamicDnsUrl;
+
+    @Parameter(names = {"--ddns-host-key"}, description = "The value of the param name of the host key " +
+            "of your dynamic DNS service.")
+    private String dynamicDnsHostKey = "hostname";
+
+    @Parameter(names = {"--ddns-record-key"}, description = "The value of the param name of the record " +
+            "key of your dynamic DNS service.")
+    private String dynamicDnsRecordKey = "txt";
+
+    @Parameter(names = {"--ddns-token-key"}, description = "The value of the param name of the auth " +
+            "token key of your dynamic DNS service.")
+    private String dynamicDnsTokenKey = "token";
+
+    @Parameter(names = {"--domain-aliases"}, description = "A list of mappings of your domain names to " +
+            "the alias records for update when using yuor dynamic DNS service.", 
+            variableArity = true, listConverter = MapEntryConverter.class)
+    private List<Map.Entry<String, String>> domainAliases;
+
+    @Parameter(names = {"--domain-tokens"}, description = "A list of mappings of your domain names to the " +
+            "tokens for authenticating with your dynamic DNS service.", 
+            variableArity = true, listConverter = MapEntryConverter.class)
+    private List<Map.Entry<String, String>> domainTokens;
 
     private boolean checkFile(String path, String errMsg) {
         if (path==null || !new File(path).isFile()) {
@@ -342,6 +399,10 @@ public class Parameters {
         return challengeType.equalsIgnoreCase(CHALLENGE_HTTP01) || challengeType.equalsIgnoreCase(CHALLENGE_DNS01);
     }
 
+    private boolean checkDynamicDnsUrl() {
+        return checkString(dynamicDnsUrl, "You must provide the url of your dynamic DNS service");
+    }
+
     public boolean verifyRequirements() {
 
         if (getCommand() == null) {
@@ -384,6 +445,12 @@ public class Parameters {
                 break;
             case Parameters.COMMAND_REVOKE_CERTIFICATE:
                 correct = checkAccountKey() && checkCertificateUriList();
+                break;
+            case Parameters.COMMAND_HTTP_GET:
+                correct = checkCsr() && checkDnsDigestsDir() && checkDynamicDnsUrl();
+                break;
+            case Parameters.COMMAND_HTTP_POST:
+                correct = checkCsr() && checkDnsDigestsDir() && checkDynamicDnsUrl();
                 break;
             default:
                 LOG.error("Command '" + command + "' not recognized. Use --help for a list of available commands");
@@ -477,4 +544,37 @@ public class Parameters {
         return configFilename;
     }
 
+    public String getDynamicDnsUrl() {
+        return dynamicDnsUrl;
+    }
+
+    public String getDynamicDnsHostKey() {
+        return dynamicDnsHostKey;
+    }
+
+    public String getDynamicDnsRecordKey() {
+        return dynamicDnsRecordKey;
+    }
+
+    public String getDynamicDnsTokenKey() {
+        return dynamicDnsTokenKey;
+    }
+
+    public Map<String, String> getDomainAliases() {
+        return toMap(domainAliases);
+    }
+
+    public Map<String, String> getDomainTokens() {
+        return toMap(domainTokens);
+    }
+    
+    protected static Map<String, String> toMap(List<Map.Entry<String, String>> list) {
+        Map<String, String> map = new HashMap<String, String>();
+        if (list != null) {
+            for (Map.Entry<String, String> entry : list) {
+                map.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return map;
+    }
 }
