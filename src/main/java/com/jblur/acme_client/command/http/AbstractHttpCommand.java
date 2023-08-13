@@ -59,16 +59,8 @@ public abstract class AbstractHttpCommand extends ACMECommand {
     protected static final String USER_AGENT;
 
     static {
-        StringBuilder agent = new StringBuilder("PJAC");
-        
-        try {
-            agent.append('/').append(Application.class.getPackage().getImplementationVersion());
-        } 
-        catch (Exception ex) {
-            // Ignore, just don't use a version
-            LoggerFactory.getLogger(AbstractHttpCommand.class).warn("Could not read library version", ex);
-        }
-        
+        StringBuilder agent = new StringBuilder();
+        agent.append("PJAC/").append(Application.class.getPackage().getImplementationVersion());
         agent.append(" Java/").append(System.getProperty("java.version"));
         USER_AGENT = agent.toString();
     }

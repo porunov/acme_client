@@ -159,19 +159,23 @@ public class Parameters {
                 + formatParameter("--account-key",true)
                 + formatParameter("--challenge-type, --domain or --csr, --work-dir",false)
                 + generateIndentString(INDENT_NUM)+"Needs work-dir file: order_uri_list\n");
-        MAIN_USAGE.append("\n* " + COMMAND_HTTP_GET + "\n" + wrapString("A convenience command for executing"
-                + " a HTTP GET to an arbitrary dynamic DNS update service. This provides"
-                + " a mechanism to set the message digest on the DNS service for the ACME challenge. SAN certificates"
-                + " are supported, in which case multiple calls will be made to update each DNS record. The"
-                + " domain-tokens and domain-aliases parameters are a comma seperated list of name=value pairs.")
+        MAIN_USAGE.append("\n* " + COMMAND_HTTP_GET + "\n" + wrapString("A convenience command for executing "
+                + "a HTTP GET to an arbitrary dynamic DNS update service. This provides "
+                + "a mechanism to set the message digest on the DNS service for the ACME challenge. SAN certificates "
+                + "are supported, in which case multiple calls will be made to update each DNS record. The "
+                + "domain-tokens parameter is the password for your dynamic DNS update service. The "
+                + "domain-tokens and domain-aliases parameters are specified as a comma separated list of "
+                + "name=value pairs.")
                 + formatParameter("--csr, --dns-digests-dir, --ddns-url, --domain-tokens", true)
                 + formatParameter("--ddns-host-key, --ddns-record-key, --ddns-token-key,"
                 + " --domain-aliases", false));
-        MAIN_USAGE.append("\n* " + COMMAND_HTTP_POST + "\n" + wrapString("A convenience command for executing"
-                + " a HTTP POST to an arbitrary dynamic DNS update service. This provides"
-                + " a mechanism to set the message digest on the DNS service for the ACME challenge. SAN certificates"
-                + " are supported, in which case multiple calls will be made to update each DNS record. The"
-                + " domain-tokens and domain-aliases parameters are a comma seperated list of name=value pairs.")
+        MAIN_USAGE.append("\n* " + COMMAND_HTTP_POST + "\n" + wrapString("A convenience command for executing "
+                + "a HTTP POST to an arbitrary dynamic DNS update service. This provides "
+                + "a mechanism to set the message digest on the DNS service for the ACME challenge. SAN certificates "
+                + "are supported, in which case multiple calls will be made to update each DNS record. The "
+                + "domain-tokens parameter is the password for your dynamic DNS update service. The "
+                + "domain-tokens and domain-aliases parameters are specified as a comma separated list of "
+                + "name=value pairs.")
                 + formatParameter("--csr, --dns-digests-dir, --ddns-url --domain-tokens", true)
                 + formatParameter("--ddns-host-key, --ddns-record-key, --ddns-token-key,"
                 + " --domain-aliases", false));
@@ -190,8 +194,11 @@ public class Parameters {
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command http-get -csr "
                 + "/etc/pjac/example.com.csr --dns-digests-dir /etc/pjac/digests/ --ddns-url "
                 + "https://dyn.dns.he.net/nic/update --ddns-host-key hostname --ddns-record-key txt "
-                + "--ddns-token-key password --domain-aliases _acme-challenge.san-a.example.com=_my-cname.san-a.example.net, _acme-challenge.san-b.example.com=_my-cname.san-b.example.net "
-                + "--domain-tokens _my-cname.san-a.example.net=...OwOXZMK5IPtBN0..., _my-cname.san-b.example.net=...N8BCp2imcCXbbd..."
+                + "--ddns-token-key password --domain-aliases "
+                + "_acme-challenge.san-a.example.com=_my-cname.san-a.example.net, "
+                + "_acme-challenge.san-b.example.com=_my-cname.san-b.example.net --domain-tokens "
+                + "_my-cname.san-a.example.net=...OwOXZMK5IPtBN0..., "
+                + "_my-cname.san-b.example.net=...N8BCp2imcCXbbd..."
                 + ""));
         MAIN_USAGE.append("\n");
     }

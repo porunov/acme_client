@@ -144,8 +144,7 @@ public class Application {
     }
 
     private static void printVersion(){
-        Package packet = Application.class.getPackage();
-        String implVersion = packet.getImplementationVersion();
+        String implVersion = Application.class.getPackage().getImplementationVersion();
         
         Properties prop = new Properties();
         try {
