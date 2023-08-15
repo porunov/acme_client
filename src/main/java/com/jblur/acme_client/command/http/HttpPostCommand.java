@@ -35,37 +35,40 @@ public class HttpPostCommand extends AbstractHttpCommand {
     @Override
     protected Map<String, Object> sendRequest(final String url, final String requestParams) throws IOException {
         
-        HttpURLConnection conn = openConnection(URI.create(url).toURL());
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty(ACCEPT_HEADER, MIME_JSON);
-        conn.setRequestProperty(ACCEPT_CHARSET_HEADER, DEFAULT_CHARSET);
-        conn.setRequestProperty(ACCEPT_LANGUAGE_HEADER, Locale.getDefault().toLanguageTag());
-        conn.setRequestProperty(CONTENT_TYPE_HEADER, MIME_FORM);
-        conn.setInstanceFollowRedirects(false);
-        conn.setUseCaches(false);
-        conn.setDoOutput(true);
-        
-        byte[] outputData = requestParams.getBytes(StandardCharsets.UTF_8);
-        
-        conn.setRequestProperty(CONTENT_LENGTH_HEADER, Integer.toString(outputData.length));
-        conn.setFixedLengthStreamingMode(outputData.length);
-        
-        conn.connect();
-        
-        try (OutputStream out = conn.getOutputStream()) {
-            out.write(outputData);
+        try (AutoHttpURLConnection auto = openConnection(URI.create(url).toURL())) {
+            
+            HttpURLConnection conn = auto.getConnection();
+            
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty(ACCEPT_HEADER, MIME_JSON);
+            conn.setRequestProperty(ACCEPT_CHARSET_HEADER, DEFAULT_CHARSET);
+            conn.setRequestProperty(ACCEPT_LANGUAGE_HEADER, Locale.getDefault().toLanguageTag());
+            conn.setRequestProperty(CONTENT_TYPE_HEADER, WWW_FORM);
+            conn.setInstanceFollowRedirects(false);
+            conn.setDoOutput(true);
+            
+            byte[] outputData = requestParams.getBytes(StandardCharsets.UTF_8);
+            
+            conn.setRequestProperty(CONTENT_LENGTH_HEADER, Integer.toString(outputData.length));
+            conn.setFixedLengthStreamingMode(outputData.length);
+            
+            conn.connect();
+            
+            try (OutputStream out = conn.getOutputStream()) {
+                out.write(outputData);
+            }
+            
+            int responseCode = conn.getResponseCode();
+            String responseText = readResponse(conn.getInputStream());
+            
+            LOG.info("Response Code: " + responseCode);
+            LOG.info("Response Text: " + responseText);
+            
+            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
+                throw new IOException("Invalid response code: " + responseCode);
+            }
+            
+            return parseResponse(responseCode, responseText);
         }
-        
-        int responseCode = conn.getResponseCode();
-        String responseText = readResponse(conn.getInputStream());
-        
-        LOG.info("Response Code: " + responseCode);
-        LOG.info("Response Text: " + responseText);
-        
-        if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
-            throw new IOException("Invalid response code: " + responseCode);
-        }
-        
-        return parseResponse(responseCode, responseText);
     }
 }

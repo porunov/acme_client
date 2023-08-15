@@ -50,7 +50,7 @@ public abstract class AbstractHttpCommand extends ACMECommand {
     protected static final String USER_AGENT_HEADER = "User-Agent";
     protected static final String DEFAULT_CHARSET = "utf-8";
     protected static final String MIME_JSON = "application/json";
-    protected static final String MIME_FORM = "application/x-www-form-urlencoded";
+    protected static final String WWW_FORM = "application/x-www-form-urlencoded";
     protected static final String ACME_CHALLENGE_PREFIX = "_acme-challenge.";
     protected static final String WILDCARD_PREFIX = "*.";
     protected static final String DNS_DIGEST_SUFFIX ="_dns_digest";
@@ -91,10 +91,15 @@ public abstract class AbstractHttpCommand extends ACMECommand {
             try {
                 String challenge = readChallenge(domain);
                 execteRequest(domain, challenge);
+                
+                Thread.sleep(getParameters().getDynamicDnsPauseMillis());
             } 
             catch (IOException ex) {
                 LOG.error("Cannot update domain record for " + domain, ex);
                 failedDomains.add(domain);
+            }
+            catch (InterruptedException ex) {
+                LOG.warn("Interrupted while updating domain record for " + domain, ex);
             }
         }
         
@@ -108,11 +113,17 @@ public abstract class AbstractHttpCommand extends ACMECommand {
     
     protected String readChallenge(final String domain) throws IOException {
         
-        String fileSuffix = domain.startsWith(WILDCARD_PREFIX) ? DNS_DIGEST_WILDCARD_SUFFIX : DNS_DIGEST_SUFFIX;
+        String digestFile;
+        
+        if (domain.startsWith(WILDCARD_PREFIX)) {
+            digestFile = domain.substring(WILDCARD_PREFIX.length(), domain.length()) + DNS_DIGEST_WILDCARD_SUFFIX;
+        }
+        else {
+            digestFile = domain + DNS_DIGEST_SUFFIX;
+        }
         
         String digest = IOManager.readString(
-                Paths.get(getParameters().getDnsDigestDir(),
-                        domain + fileSuffix).toString()
+                Paths.get(getParameters().getDnsDigestDir(), digestFile).toString()
         );
         
         return digest;
@@ -120,15 +131,15 @@ public abstract class AbstractHttpCommand extends ACMECommand {
     
     protected void execteRequest(final String domain, final String challenge) throws IOException {
         
-        String record = domain.startsWith(WILDCARD_PREFIX) ? 
-                domain.substring(WILDCARD_PREFIX.length(), domain.length()) : domain;
-        
-        record = ACME_CHALLENGE_PREFIX + record;
+        String fqdn = ACME_CHALLENGE_PREFIX + (
+                domain.startsWith(WILDCARD_PREFIX) ? 
+                domain.substring(WILDCARD_PREFIX.length(), domain.length()) : domain);
         
         Parameters params = getParameters();
         
-        String alias = params.getDomainAliases().get(record);
-        String token = params.getDomainTokens().get(alias == null ? record : alias);
+        String alias = params.getDomainAliases().get(fqdn);
+        String host = alias == null ? fqdn : alias;
+        String token = params.getDomainTokens().get(host);
         
         String url = params.getDynamicDnsUrl();
         String hostKey = params.getDynamicDnsHostKey();
@@ -136,7 +147,7 @@ public abstract class AbstractHttpCommand extends ACMECommand {
         String recordKey = params.getDynamicDnsRecordKey();
         
         String requestParams = String.join("&", 
-                String.join("=", hostKey, alias == null ? record : alias),
+                String.join("=", hostKey, host),
                 String.join("=", tokenKey, token),
                 String.join("=", recordKey, challenge));
         
@@ -152,18 +163,16 @@ public abstract class AbstractHttpCommand extends ACMECommand {
     
     protected abstract Map<String, Object> sendRequest(final String url, final String requestParams) throws IOException;
     
-    protected HttpURLConnection openConnection(final URL url) throws IOException {
+    protected AutoHttpURLConnection openConnection(final URL url) throws IOException {
+        
         HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
-        configure(conn);
-        return conn;
-    }
-    
-    protected void configure(final HttpURLConnection conn) {
         
         conn.setConnectTimeout(timeout);
         conn.setReadTimeout(timeout);
         conn.setUseCaches(false);
         conn.setRequestProperty(USER_AGENT_HEADER, USER_AGENT);
+        
+        return new AutoHttpURLConnection(conn);
     }
     
     protected String readResponse(final InputStream stream) throws IOException {
@@ -172,16 +181,18 @@ public abstract class AbstractHttpCommand extends ACMECommand {
             return null;
         }
         
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        String line;
-        StringBuilder response = new StringBuilder();
-        
-        while ((line = reader.readLine()) != null) {
-            response.append(line);
+        try (InputStreamReader streamReader = new InputStreamReader(stream);
+                BufferedReader reader = new BufferedReader(streamReader)) {
+            
+            String line;
+            StringBuilder response = new StringBuilder();
+            
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
+            
+            return response.toString();
         }
-        reader.close();
-        
-        return response.toString();
     }
     
     protected Map<String, Object> parseResponse(final int responseCode, final String responseText) {
@@ -201,5 +212,23 @@ public abstract class AbstractHttpCommand extends ACMECommand {
         }
         
         return responseMap;
+    }
+    
+    protected class AutoHttpURLConnection implements AutoCloseable {
+
+        private final HttpURLConnection conn;
+
+        public AutoHttpURLConnection(final HttpURLConnection connection) {
+            conn = connection;
+        }
+
+        public HttpURLConnection getConnection() {
+            return conn;
+        }
+
+        @Override
+        public void close() throws IOException {
+            conn.disconnect();
+        }
     }
 }

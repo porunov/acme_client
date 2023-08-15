@@ -16,11 +16,11 @@ import com.beust.jcommander.ParameterException;
 public class PropertyFileDefaultProvider implements IDefaultProvider {
     private Properties properties;
 
-    public PropertyFileDefaultProvider(String fileName) {
+    public PropertyFileDefaultProvider(final String fileName) {
         init(fileName);
     }
 
-    private void init(String fileName) {
+    private void init(final String fileName) {
         File propertyFile = new File(fileName);
         if (propertyFile.isFile()) {
             try (FileReader reader = new FileReader(propertyFile)) {
@@ -30,12 +30,14 @@ public class PropertyFileDefaultProvider implements IDefaultProvider {
             catch (IOException ex) {
                 throw new ParameterException("Could not open property file: " + fileName);
             }
-        } else {
+        } 
+        else {
             throw new ParameterException("Could not find property file: " + fileName);
         }
     }
     
-    public String getDefaultValueFor(String optionName) {
+    @Override
+    public String getDefaultValueFor(final String optionName) {
         int index = 0;
         while (index < optionName.length() && ! Character.isLetterOrDigit(optionName.charAt(index))) {
             index++;

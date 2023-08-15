@@ -2,8 +2,8 @@ package com.jblur.acme_client;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.DEROctetString;
-import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.pkcs.Attribute;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x509.GeneralNames;
@@ -42,13 +42,13 @@ public class CSRParser {
             Iterator<ASN1Encodable> attrValIt = attribute.getAttrValues().iterator();
             while (attrValIt.hasNext()){
 
-                Iterator<ASN1Encodable> seqIt = ((DERSequence) attrValIt.next()).iterator();
+                Iterator<ASN1Encodable> seqIt = ((ASN1Sequence) attrValIt.next()).iterator();
 
                 while (seqIt.hasNext()){
-                    DERSequence seq = (DERSequence) seqIt.next();
+                    ASN1Sequence seq = (ASN1Sequence) seqIt.next();
                     ASN1ObjectIdentifier oid = (ASN1ObjectIdentifier) seq.getObjectAt(0);
                     if (SUBJECT_ALTERNATIVE_NAME.equals(oid.getId())) {
-                        DEROctetString str = (DEROctetString) seq.getObjectAt(1);
+                        ASN1OctetString str = (ASN1OctetString) seq.getObjectAt(1);
 
                         GeneralNames names = GeneralNames.getInstance(str.getOctets());
 

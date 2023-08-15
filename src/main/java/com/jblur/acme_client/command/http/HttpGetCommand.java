@@ -33,27 +33,30 @@ public class HttpGetCommand extends AbstractHttpCommand {
     @Override
     protected Map<String, Object> sendRequest(final String url, final String requestParams) throws IOException {
         
-        HttpURLConnection conn = openConnection(URI.create(url + '?' + requestParams).toURL());
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty(ACCEPT_HEADER, MIME_JSON);
-        conn.setRequestProperty(ACCEPT_CHARSET_HEADER, DEFAULT_CHARSET);
-        conn.setRequestProperty(ACCEPT_LANGUAGE_HEADER, Locale.getDefault().toLanguageTag());
-        conn.setInstanceFollowRedirects(false);
-        conn.setUseCaches(false);
-        conn.setDoOutput(false);
-        
-        conn.connect();
-        
-        int responseCode = conn.getResponseCode();
-        String responseText = readResponse(conn.getInputStream());
-        
-        LOG.info("Response Code: " + responseCode);
-        LOG.info("Response Text: " + responseText);
-        
-        if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
-            throw new IOException("Invalid response code: " + responseCode);
+        try (AutoHttpURLConnection auto = openConnection(URI.create(url + '?' + requestParams).toURL())) {
+            
+            HttpURLConnection conn = auto.getConnection();
+            
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty(ACCEPT_HEADER, MIME_JSON);
+            conn.setRequestProperty(ACCEPT_CHARSET_HEADER, DEFAULT_CHARSET);
+            conn.setRequestProperty(ACCEPT_LANGUAGE_HEADER, Locale.getDefault().toLanguageTag());
+            conn.setInstanceFollowRedirects(false);
+            conn.setDoOutput(false);
+            
+            conn.connect();
+            
+            int responseCode = conn.getResponseCode();
+            String responseText = readResponse(conn.getInputStream());
+            
+            LOG.info("Response Code: " + responseCode);
+            LOG.info("Response Text: " + responseText);
+            
+            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_CREATED) {
+                throw new IOException("Invalid response code: " + responseCode);
+            }
+            
+            return parseResponse(responseCode, responseText);
         }
-        
-        return parseResponse(responseCode, responseText);
     }
 }

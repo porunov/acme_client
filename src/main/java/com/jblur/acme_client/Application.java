@@ -99,7 +99,7 @@ public class Application {
             return new PropertyFileDefaultProvider(configFilename);
         }
         catch (NoSuchFieldException | SecurityException | ParameterException ex) {
-            LOG.warn("An problem occurred while locating default configuration.", ex);
+            LOG.warn("Unable to locate default configuration. {}", ex.getMessage());
             return null;
         }
     }

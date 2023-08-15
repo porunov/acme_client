@@ -193,7 +193,7 @@ public class Parameters {
                 + "/etc/pjac/certdir/"));
         MAIN_USAGE.append(wrapString("\njava -jar acme_client.jar --command http-get -csr "
                 + "/etc/pjac/example.com.csr --dns-digests-dir /etc/pjac/digests/ --ddns-url "
-                + "https://dyn.dns.he.net/nic/update --ddns-host-key hostname --ddns-record-key txt "
+                + "https://dyn.dns.example.com/nic/update --ddns-host-key hostname --ddns-record-key txt "
                 + "--ddns-token-key password --domain-aliases "
                 + "_acme-challenge.san-a.example.com=_my-cname.san-a.example.net, "
                 + "_acme-challenge.san-b.example.com=_my-cname.san-b.example.net --domain-tokens "
@@ -318,6 +318,10 @@ public class Parameters {
     @Parameter(names = {"--ddns-token-key"}, description = "The value of the param name of the auth " +
             "token key of your dynamic DNS service.")
     private String dynamicDnsTokenKey = "token";
+
+    @Parameter(names = {"--ddns-pause-millis"}, description = "The time to pause between requests to the " +
+            "dynamic DNS service when updating multiple records.")
+    private int dynamicDnsPauseMillis = 1000;
 
     @Parameter(names = {"--domain-aliases"}, description = "A list of mappings of your domain names to " +
             "the alias records for update when using yuor dynamic DNS service.", 
@@ -565,6 +569,10 @@ public class Parameters {
 
     public String getDynamicDnsTokenKey() {
         return dynamicDnsTokenKey;
+    }
+    
+    public int getDynamicDnsPauseMillis() {
+        return dynamicDnsPauseMillis;
     }
 
     public Map<String, String> getDomainAliases() {
