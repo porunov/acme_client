@@ -253,6 +253,7 @@ public class WorkflowIT {
         
         Application.main(new String[] {"--command", "revoke-certificate",
                 "--account-key", ACCOUNT_KEY_FILE,
+                "--csr", DOMAIN_CSR_FILE,
                 "--work-dir", WORKING_DIR,
                 "--log-dir", LOG_DIR,
                 "--server-url", SERVER_URL});
@@ -266,6 +267,7 @@ public class WorkflowIT {
         
         Application.main(new String[] {"--command", "deactivate-domain-authorization",
                 "--account-key", ACCOUNT_KEY_FILE,
+                "--csr", DOMAIN_CSR_FILE,
                 "--work-dir", WORKING_DIR,
                 "--log-dir", LOG_DIR,
                 "--server-url", SERVER_URL});
@@ -279,6 +281,7 @@ public class WorkflowIT {
         
         Application.main(new String[] {"--command", "deactivate-account",
                 "--account-key", ACCOUNT_KEY_FILE,
+                "--work-dir", WORKING_DIR,
                 "--log-dir", LOG_DIR,
                 "--server-url", SERVER_URL});
     }

@@ -227,7 +227,7 @@ public abstract class AbstractHttpCommand extends ACMECommand {
         }
 
         @Override
-        public void close() throws IOException {
+        public void close() {
             conn.disconnect();
         }
     }
