@@ -21,15 +21,18 @@ This is a minor release with added convenience features. Also includes upgrades 
     - These are convenience commands for executing either a HTTP POST or HTTP GET to an arbitrary dynamic DNS update service. 
     - This provides a mechanism to set the message digest on the DNS service for the ACME challenge. 
     - SAN certificates are supported, in which case multiple calls will be made to update each DNS record. 
-    - The domain-tokens parameter is the password for your dynamic DNS update service. 
+    - The `domain-tokens` parameter is the password for your dynamic DNS update service. 
     - Domain alias mappings are supported if your DNS maps a CNAME to an alternate record.
-    - The domain-tokens and domain-aliases parameters are specified as a comma separated list of name=value pairs.
+    - The `domain-tokens` and `domain-aliases` parameters are specified as a comma separated list of `name=value` pairs.
  * Release artifact as ZIP, alternative release for shaded uber JAR is still included.
     - Shading required removal of signing information from the dependency JARs, lessening the trustworthiness that the dependencies hadn't been tampered with in some way.
     - Just unzip the release ZIP file and run the JAR in exactly the same way you would have run the uber JAR.
+    - The two releases are built by activating the appropriate Maven profile.
+    - Run either `mvn clean package -P release-lib` to build the ZIP, or `mvn clean package -P release-shade` to build the uber JAR.
  * Integration Tests. 
     - A full workflow life cycle example with DNS validation is tested from account registration through to deactivation.
     - An example integration-test.properties file is included in the source.
+    - The integration tests can be run with `mvn clean verify`.
  * Change log.
 
 ### Fixed
