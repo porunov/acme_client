@@ -4,7 +4,12 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
 import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
+
+import com.beust.jcommander.IDefaultProvider;
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.ParameterException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
@@ -29,6 +34,12 @@ public class Application {
         JCommander jCommander = JCommander.newBuilder()
                 .addObject(parameters)
                 .build();
+        
+        IDefaultProvider defaultProvider = configureDefaultProvider(args, parameters.getConfigFilename());
+        
+        if (defaultProvider != null) {
+            jCommander.setDefaultProvider(defaultProvider);
+        }
 
         try {
             jCommander.parse(args);
@@ -63,6 +74,34 @@ public class Application {
         }
 
         new CommandExecutor(parameters).execute();
+    }
+
+    /**
+     * Attempts to locate a configuration file, either specified on the command line, or with a default name.
+     * @param args the command line arguments.
+     * @param configFilename the default name of the configuration file.
+     * @return a default property provider if a configuration file could be found, null otherwise.
+     */
+    private static IDefaultProvider configureDefaultProvider(String[] args, String configFilename) {
+        try {
+            String[] paramNames = Parameters.class.getDeclaredField("configFilename").getAnnotation(Parameter.class).names();
+            
+            if (paramNames != null && paramNames.length > 0) {
+                for (int index = 0; index < args.length; index++) {
+                    for (String paramName : paramNames) {
+                        if (paramName.equals(args[index]) && index + 1 < args.length) {
+                            return new PropertyFileDefaultProvider(args[index + 1]);
+                        }
+                    }
+                }
+            }
+            
+            return new PropertyFileDefaultProvider(configFilename);
+        }
+        catch (NoSuchFieldException | SecurityException | ParameterException ex) {
+            LOG.warn("Unable to locate default configuration. {}", ex.getMessage());
+            return null;
+        }
     }
 
     private static void configureLogger(String logDir, String logLevel, String logbackConf) {
@@ -105,10 +144,13 @@ public class Application {
     }
 
     private static void printVersion(){
+        String implVersion = Application.class.getPackage().getImplementationVersion();
+        
         Properties prop = new Properties();
         try {
             prop.load(classloader.getResourceAsStream(APPLICATION_PROPS));
-            System.out.println(prop.getProperty("version"));
+            String version = prop.getProperty("version");
+            System.out.println(String.format(version, implVersion != null ? implVersion : "?"));
         }
         catch (IOException ex) {
             LOG.error("Cannot get version information.", ex);

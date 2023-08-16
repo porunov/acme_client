@@ -9,3 +9,15 @@ fabric.properties
 
 build/
 .gradle/
+
+# Eclipse and Mac OS
+target/
+.metadata
+.settings
+.classpath
+.project
+.DS_Store
+
+# Local configuration
+config.properties
+integration-test.properties
