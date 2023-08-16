@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+No changes yet.
+
+## [3.1.0-UNRELEASED] - 2023-MM-DD
+
 This is a minor release with added convenience features. Also includes upgrades to dependencies.
 
 ### Added
@@ -87,7 +91,7 @@ See [the wiki](https://github.com/porunov/acme_client/wiki) to get information a
 
 ## [2.1.3] - 2018-04-24
 
-2.1.3 acme_client (PJAC)
+v2.1.3 acme_client (PJAC)
 
 ### Changed
 
@@ -97,7 +101,7 @@ The next major release will support acme v2
 
 ## [2.1.2] - 2017-08-22
 
-2.1.2 acme_client (PJAC)
+v2.1.2 acme_client (PJAC)
 
 ### Fixed
 
@@ -110,7 +114,7 @@ The next major release will support acme v2
 
 ## [2.1.1] - 2017-04-25
 
-2.1.1 acme_client (PJAC)
+v2.1.1 acme_client (PJAC)
 
 ### Fixed
 
@@ -119,7 +123,7 @@ The next major release will support acme v2
 
 ## [2.1.0] - 2017-04-18
 
-2.1.0 acme_client (PJAC)
+v2.1.0 acme_client (PJAC)
 
 ### Changed
 
