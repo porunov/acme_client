@@ -82,7 +82,8 @@ v3.0.0 acme_client (PJAC)
 
  * Commands: `renew-certificate`, `update-agreement` and `authorize-domains` are removed.
  * New command `order-certificate` is added.
- * See [the wiki](https://github.com/porunov/acme_client/wiki) to get information about new certificate order flow.
+
+See [the wiki](https://github.com/porunov/acme_client/wiki) to get information about new certificate order flow.
 
 ## [2.1.3] - 2018-04-24
 
@@ -91,7 +92,8 @@ v3.0.0 acme_client (PJAC)
 ### Changed
 
  * Update acme4j to v1.0
- * The next major release will support acme v2
+
+The next major release will support acme v2
 
 ## [2.1.2] - 2017-08-22
 
@@ -136,12 +138,17 @@ v2.0 acme_client
 
 ### Changed
 
- * The ACME client now works with a work-dir differently. Now it doesn't serialize objects, but saves only json arrays with links to authorization or certificates. That is why all next releases will be compatible.
+ * The ACME client now works with a `work-dir` differently. Now it doesn't serialize objects, but saves only json arrays with links to authorization or certificates. That is why all next releases will be compatible.
+ 
+### Fixed
+
  * Bug fixes.
  
 ### Breaking Changes
+
 _Warning!_
- * acme_client v2.0 isn't compatible with the acme_client v1.0. All next releases will be compatible to with the acme_client v2.0.
+
+acme_client v2.0 isn't compatible with the acme_client v1.0. All next releases will be compatible to with the acme_client v2.0.
 To move from the client v1.0 to the client v2.0 you need to remove files `authorization_uri_list` and `certificate_uri_list` from the working directory. After that you need to generate a new certificate.
 
 ## [1.0] - 2016-12-06
@@ -149,5 +156,4 @@ To move from the client v1.0 to the client v2.0 you need to remove files `author
 v1.0 acme_client
 
 First release
-
 
